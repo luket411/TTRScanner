@@ -11,8 +11,9 @@ counter = 0
 coords = np.zeros((4,2), dtype=np.float32)
 
 def onclick(event):
+    print("hello world")
     global counter, coords
-    if counter > 4:
+    if counter >= 4:
         counter = 0
         print("\n\n\n")
         print("here")
@@ -20,16 +21,16 @@ def onclick(event):
     coords[counter] = np.array([event.xdata, event.ydata])
     counter += 1
 
-def getFullPath(file_name):
-    return ospath.join("Assets/1.0 Blank", file_name)
+def getFullPath(file_name, path="Assets/1.0 Blank"):
+    return ospath.join(path, file_name)
 
 def getImagesInDir(directory):
-    return [filename for filename in listdir(directory)]
+    return [getFullPath(filename, directory) for filename in listdir(directory)]
 
 def main():
-    image_files = getImagesInDir("Assets/1.0 Blank")
-    for image_file in image_files:
-        image_file = getFullPath(image_file)
+    image_files = getImagesInDir("C:/Users/lnt20/Documents/TTR Project/New folder")
+    for i, image_file in enumerate(image_files):
+        print(image_file)
         img = cv2.imread(image_file)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         fig = plt.figure(1)
@@ -41,8 +42,9 @@ def main():
         print(coords)
         warped_image = transform_board(img, coords)
         plt.imshow(warped_image)
+        file_name = len(listdir("assets\\0.0 Cropped"))
+        cv2.imwrite(f"assets\\0.0 Cropped\\{file_name+1}.png", cv2.cvtColor(warped_image, cv2.COLOR_BGR2RGB))
         plt.show()
-        break
 
 
 if __name__ == "__main__":
