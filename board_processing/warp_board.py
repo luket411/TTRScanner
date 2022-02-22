@@ -4,7 +4,7 @@ path.append(f'{ospath.dirname(__file__)}/..')
 from datasets import blank_board
 import numpy as np
 import cv2
-
+from datasets.cities import cities_loader
 
 desired_corners = np.array([[0,0],[0,2000],[3000,2000],[3000,0]], dtype='float32')
 transform_size = (3000,2000)
@@ -16,6 +16,13 @@ def transform_board(board, original, desired, transform_size):
     transformed = cv2.warpPerspective(board, M, transform_size)    
     return transformed
 
+
+def annotate_fixed_city_points(transformed_board):
+    cities = cities_loader()
+
+    for _, location in cities:
+        cv2.circle(transformed_board, (int(location[0]), int(location[1])), 60, [0,255,0], 4)
+    return transformed_board
 
 def main(clean_board_file = "assets\\1.0 Blank\\PXL_20220209_145822567.jpg"):
     corners = [[164,61],[58,1908],[2907,1932],[2859,125]]
