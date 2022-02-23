@@ -1,4 +1,3 @@
-from unittest.mock import NonCallableMagicMock
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
@@ -29,33 +28,48 @@ class Quadrilateral():
             plt.show()
         
     def getEdgeLines(self):
-        lines = []
+        boundaries = []
         for i in range(-1, len(self.points)-1):
-            lines.append(Line.construct_line_from_points(*self.points[i], *self.points[i+1]))
-        return lines
+            boundaries.append(Segment(*self.points[i], *self.points[i+1]))
+        return boundaries
         
     def isIn(self, point):
-        if point.x > self.max_x or point.y > self.max_y or point.x < self.min_x or point.y < self.min_y:
+        # If point is above the minimum or maximum x or y of the whole shape then return false
+        if not(isBetween(self.max_x, self.min_x, point.x)) or not(isBetween(self.max_y, self.min_y, point.y)):
             return False
         
-        lines = self.getEdgeLines()
+        # Gets the edge segments of the shape
+        boundary_segments = self.getEdgeLines()
+        
+        # Calculate a verticle line and horizontal line that meet at the point
         vert_line = Line(np.inf,x_intercept=point.x)
         horz_line = Line(0, intercept=point.y)
         
         vert_line.plot(show=False)
         horz_line.plot(show=False)
         
-        horz_bounds = []
-        vert_bounds = []
         
-        for line in lines:
-            vert_intersection_point = vert_line.find_intersection(line)
-            horz_intersection_point = horz_line.find_intersection(line)
-            if vert_intersection_point is not None and vert_intersection_point.isValid() and self.min_y <= vert_intersection_point.y <= self.max_y:
-                vert_bounds.append(vert_intersection_point)
-            if horz_intersection_point is not None and horz_intersection_point.isValid() and self.min_x <= horz_intersection_point.x <= self.max_x:
-                horz_bounds.append(horz_intersection_point)
+        horz_bounds = set()
+        vert_bounds = set()
+        
+        # Iterates through each edge
+        for boundary in boundary_segments:
+            
+            # Calculates the intersection points between the verticle line of the point and the current boundary
+            vert_intersection_point = vert_line.find_intersection(boundary)
+            
+            # Calculates the intersection points between the horizontal line of the point and the current boundary
+            horz_intersection_point = horz_line.find_intersection(boundary)
+            
+            # Checks the verticle intersection point exists and that its 
+            if (vert_valid := vert_intersection_point.isValid()):
+                vert_bounds.add(vert_intersection_point)
+            # Checks that the horizontal intersection point exists and that it's within the mi
+            if (horz_valid := horz_intersection_point.isValid()):
+                horz_bounds.add(horz_intersection_point)
 
+        horz_bounds = list(horz_bounds)
+        vert_bounds = list(vert_bounds)
         
         for p in [*vert_bounds, *horz_bounds]:
             p.plot(show=False)
@@ -88,7 +102,13 @@ class Point():
         
     def isValid(self):
         return self.x is not None and self.y is not None
+
+class NonePoint(Point):
+    def __init__(self):
+        super().__init__(0, 0)
         
+    def isValid(self):
+        return False
 
 class Line():
     def __init__(self, grad, intercept=None, x_intercept=None, min_x=-np.inf, min_y = -np.inf, max_x = np.inf, max_y = np.inf):
@@ -101,7 +121,7 @@ class Line():
         self.max_y = max_y
             
     def get_y(self, x):
-        if self.min_x < x < self.max_x:
+        if isBetween(self.min_x, self.max_x, x):
             if self.is_vertical():
                 return None
             elif self.is_horizontal():
@@ -110,7 +130,7 @@ class Line():
                 return self.grad*x + self.y_intercept
         
     def get_x(self, y):
-        if self.min_y < y < self.max_y:
+        if isBetween(self.min_y, self.max_y, y):
             if self.is_vertical():
                 return self.x_intercept
             elif self.is_horizontal():
@@ -122,18 +142,21 @@ class Line():
         return f"(Grad: {self.grad}, y_intercept: {self.y_intercept}, x_intercept: {self.x_intercept})"
 
     def plot(self, image=None, show=True):
+        if image is not None:
+            plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+            (max_y, max_x, _) = image.shape
+        else:
+            max_y, max_x = 10000, 10000
+        min_x, min_y = -max_x, -max_y
         
         line_points = []
         
         if self.is_horizontal():
-            line_points = [(self.min_x, self.max_x), (self.get_y(self.min_x), self.get_y(self.max_x))]
+            line_points = [(min_x, max_x), (self.get_y(min_x), self.get_y(max_x))]
         elif self.is_vertical():
-            line_points = [(self.get_x(self.min_y), self.get_x(self.max_y)), (self.min_y, self.max_y)]
+            line_points = [(self.get_x(min_y), self.get_x(max_y)), (min_y, max_y)]
         else:
-            line_points = [(self.get_x(self.min_y), self.get_x(self.min_y)), (self.get_y(self.min_x), self.get_y(self.max_x))]
-        
-        if image is not None:
-            plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+            line_points = [(self.get_x(min_y), self.get_x(min_y)), (self.get_y(min_x), self.get_y(max_x))]
         
         plt.plot(*line_points)
         
@@ -174,9 +197,9 @@ class Line():
     def find_intersection(self, other_line):
     
         if self.is_vertical() and other_line.is_vertical(): # both are vertical
-            return None
+            return NonePoint()
         if self.is_horizontal() and other_line.is_horizontal():
-            return None
+            return NonePoint()
         
         if self.is_vertical():
             return Point(self.x_intercept, other_line.get_y(self.x_intercept))
@@ -207,11 +230,62 @@ class Line():
         
         return Line(grad, intercept, min_x=min_x, min_y=min_y, max_x=max_x, max_y=max_y)
 
+class Segment(Line):
+    def __init__(self, x0, y0, x1, y1):
+        self.grad = None
+        self.x_intercept = None
+        self.y_intercept = None
+        self.p1 = Point(x0, y0)
+        self.p2 = Point(x1, y1)
+        
+        self.min_x = np.min([x0, x1])
+        self.max_x = np.max([x0, x1])
+        
+        self.min_y = np.min([y0, y1])
+        self.max_y = np.max([y0, y1])
+        
+        if x0 == x1:
+            self.grad = np.inf 
+            self.x_intercept = x0
+        elif y0 == y1:
+            self.grad = 0 
+            self.y_intercept = y0
+        else:
+            self.grad = (y1-y0)/(x1-x0)
+            self.y_intercept = y0 - self.grad*x0
+            self.x_intercept = -self.y_intercept/self.grad
+            
+    def find_intersection(self, other_line):
+        intersectionPoint =  super().find_intersection(other_line)
+        if isBetween(self.max_x, self.min_x, intersectionPoint.x) and isBetween(self.max_y, self.min_y, intersectionPoint.y):
+            return intersectionPoint
+        else:
+            return NonePoint()
+        
+    def plot(self, image=None, show=True):
+            
+        line_points = []
+        
+        if self.is_horizontal():
+            line_points = [(self.min_x, self.max_x), (self.get_y(self.min_x), self.get_y(self.max_x))]
+        elif self.is_vertical():
+            line_points = [(self.get_x(self.min_y), self.get_x(self.max_y)), (self.min_y, self.max_y)]
+        else:
+            line_points = [(self.get_x(self.min_y), self.get_x(self.min_y)), (self.get_y(self.min_x), self.get_y(self.max_x))]
+        
+        if image is not None:
+            plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        
+        plt.plot(*line_points)
+        
+        if show:
+            plt.show()
+
 # Returns true if z is between x and y
 def isBetween(x,y,z):
     a = np.max([x,y])
     b = np.min([x,y])
-    print(f"{a >= z >= b}:{a} >= {z} >= {b}")
+    # print(f"{a >= z >= b}:{a} >= {z} >= {b}")
     return a >= z >= b
 
 if __name__ == "__main__":
@@ -220,16 +294,18 @@ if __name__ == "__main__":
     p2 = Point(4,2)
     p3 = Point(3,4)
     
-    p5 = Point(1.75, 3)
+    p5 = Point(1.08, 3.97)
     
     q = Quadrilateral(p1, p2, p3, p4)
+    
+    q.plot(show=False)
+    p5.plot(show=False)
+    
     
     plt.xlim(q.min_x-1, q.max_x+1)
     plt.ylim(q.min_y-1, q.max_y+1)
     
     print(q.isIn(p5))
-    q.plot(show=False)
-    p5.plot(show=False)
     
     
     plt.show()
