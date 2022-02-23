@@ -1,7 +1,6 @@
 from sys import path
 from os import path as ospath
 path.append(f'{ospath.dirname(__file__)}/..')
-from datasets import blank_board
 import numpy as np
 import cv2
 from datasets.cities import cities_loader
@@ -17,8 +16,8 @@ def transform_board(board, original, desired, transform_size):
     return transformed
 
 
-def annotate_fixed_city_points(transformed_board):
-    cities = cities_loader()
+def annotate_fixed_city_points(transformed_board, city_file="assets\\cities_avg.csv"):
+    cities = cities_loader(city_file)
 
     for _, location in cities:
         cv2.circle(transformed_board, (int(location[0]), int(location[1])), 60, [0,255,0], 4)

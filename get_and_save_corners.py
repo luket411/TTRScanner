@@ -25,7 +25,7 @@ def getFullPath(file_name, path="Assets/1.0 Blank"):
     return ospath.join(path, file_name)
 
 def getImagesInDir(directory):
-    return [getFullPath(filename, directory) for filename in listdir(directory)]
+    return [getFullPath(filename, directory) for filename in listdir(directory) if filename[-4:] == ".png" or filename[-4:] == ".jpg"]
 
 def main():
     image_files = getImagesInDir("C:/Users/lnt20/Documents/TTR Project/New folder")

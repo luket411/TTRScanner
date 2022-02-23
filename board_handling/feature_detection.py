@@ -1,10 +1,12 @@
 from sys import path
-from os import path as ospath
+from os import listdir, path as ospath
 
 path.append(f'{ospath.dirname(__file__)}/..')
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
+from board_processing.warp_board import annotate_fixed_city_points
+from get_and_save_corners import getImagesInDir
 
 def orb_get_keypoints_descriptors(img, draw=False):   
 
@@ -45,7 +47,9 @@ def main(source_file = "assets\\3.1 Blue-Yellow,Green,Gray\\PXL_20220209_1531089
     source_img = cv2.cvtColor(source_img, cv2.COLOR_BGR2RGB)
     target_img = cv2.imread(target_file, 1)
     target_img = cv2.cvtColor(target_img, cv2.COLOR_BGR2RGB)
-    
+    return find_homography_between_images(source_img, target_img)
+
+def find_homography_between_images(source_img, target_img):
     source_keypoints, source_descriptors = orb_get_keypoints_descriptors(source_img)
     target_keypoints, target_descriptors = orb_get_keypoints_descriptors(target_img)
     
@@ -72,23 +76,36 @@ def main(source_file = "assets\\3.1 Blue-Yellow,Green,Gray\\PXL_20220209_1531089
     print(targetpts.shape)
     print(sourcepts.shape)
     
-    H = cv2.findHomography(sourcepts, targetpts)[0]
+    H = cv2.findHomography(sourcepts, targetpts, cv2.RANSAC, 20.0)[0]
     
-    draw_matches(possiblyCorrectMatches, source_img, source_keypoints, target_img, target_keypoints)
-    numMatches = len(possiblyCorrectMatches)
-    for i in range(numMatches):
-        xy = H @ np.array([[sourcepts[i,0]], [sourcepts[i,1]], [1]])
-        x = xy[0]/xy[2]
-        y = xy[1]/xy[2]
-        print(f"\n{x[0]},{y[0]}")
-        print(targetpts[i])
+    # draw_matches(possiblyCorrectMatches, source_img, source_keypoints, target_img, target_keypoints)
+    # numMatches = len(possiblyCorrectMatches)
+    # for i in range(numMatches):
+    #     xy = H @ np.array([[sourcepts[i,0]], [sourcepts[i,1]], [1]])
+    #     x = xy[0]/xy[2]
+    #     y = xy[1]/xy[2]
+    #     print(f"\n{x[0]},{y[0]}")
+    #     print(targetpts[i])
     
-    warped = cv2.warpPerspective(source_img, H, (target_img.shape[1], target_img.shape[0]))
-    plt.imshow(warped)
-    plt.show()
+    return H
+    
+
 
 if __name__ == "__main__":
-    main(
-        target_file="assets\\0.0 Cropped\\11.png",
-        source_file="assets\\2.0 Red-Red\\PXL_20220209_150018426.jpg"
+    target_file="assets\\0.0 Cropped\\11.png"
+        # source_file="assets\\2.0 Red-Red\\PXL_20220209_150018426.jpg"
+    for source_file in getImagesInDir("assets\\2.0 Red-Red"):
+        H = main(
+            target_file=target_file,
+            source_file=source_file
         )
+        source_img = cv2.imread(source_file, 1)
+        source_img = cv2.cvtColor(source_img, cv2.COLOR_BGR2RGB)
+        target_img = cv2.imread(target_file, 1)
+        target_img = cv2.cvtColor(target_img, cv2.COLOR_BGR2RGB)
+            
+        warped = cv2.warpPerspective(source_img, H, (target_img.shape[1], target_img.shape[0]))
+        annotated = annotate_fixed_city_points(np.copy(warped), "assets\\0.0 Cropped\\cities11.csv")
+        plt.imshow(annotated)
+        plt.show()
+    
