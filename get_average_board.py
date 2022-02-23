@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from get_and_save_corners import getImagesInDir
+from board_processing.warp_board import annotate_fixed_city_points
 
 def main():
     images = []
@@ -22,6 +23,7 @@ def main():
     print(np.min(avg))
     avg = cv2.cvtColor(avg, cv2.COLOR_BGR2RGB)
     # cv2.imwrite(f"assets\\avg.png", cv2.cvtColor(avg*255, cv2.COLOR_BGR2RGB))
+    avg = annotate_fixed_city_points(avg)
     plt.imshow(avg)
     plt.show()
     

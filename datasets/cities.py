@@ -2,8 +2,8 @@ from csv import reader
 
 
 class cities_loader():
-    def __init__(self):
-        with open(f'assets/cities.csv') as cities_file:
+    def __init__(self, city_file=f'assets/cities.csv'):
+        with open(city_file) as cities_file:
             for row in reader(cities_file):
                 if len(row) != 3:
                     raise IndexError(f"Input row for row:'{row[0]}' len(row) != 3")
