@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from get_and_save_corners import getImagesInDir
-from board_processing.warp_board import annotate_fixed_city_points
+from board_handling.warp_board import annotate_fixed_city_points
 
 def main():
     images = []

@@ -5,7 +5,7 @@ path.append(f'{ospath.dirname(__file__)}/..')
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from board_processing.warp_board import annotate_fixed_city_points
+from board_handling.warp_board import annotate_fixed_city_points
 from get_and_save_corners import getImagesInDir
 
 def orb_get_keypoints_descriptors(img, draw=False):   

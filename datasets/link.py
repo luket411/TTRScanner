@@ -1,5 +1,5 @@
 import numpy as np
-from shapes import Quadrilateral, Point
+from util.geometry import Quadrilateral, Point
 
 
 class BoardSegment():
