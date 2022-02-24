@@ -1,6 +1,5 @@
 from sys import path
 from os import listdir, path as ospath
-
 path.append(f'{ospath.dirname(__file__)}/..')
 import numpy as np
 import cv2
@@ -89,23 +88,28 @@ def find_homography_between_images(source_img, target_img):
     
     return H
     
-
+def find_board(target_file, source_file):
+    H = main(
+        target_file=target_file,
+        source_file=source_file
+    )
+    source_img = cv2.imread(source_file, 1)
+    source_img = cv2.cvtColor(source_img, cv2.COLOR_BGR2RGB)
+    target_img = cv2.imread(target_file, 1)
+    target_img = cv2.cvtColor(target_img, cv2.COLOR_BGR2RGB)
+        
+    warped = cv2.warpPerspective(source_img, H, (target_img.shape[1], target_img.shape[0]))
+    return warped
 
 if __name__ == "__main__":
     target_file="assets\\0.0 Cropped\\11.png"
-        # source_file="assets\\2.0 Red-Red\\PXL_20220209_150018426.jpg"
-    for source_file in getImagesInDir("assets\\2.0 Red-Red"):
-        H = main(
-            target_file=target_file,
-            source_file=source_file
-        )
-        source_img = cv2.imread(source_file, 1)
-        source_img = cv2.cvtColor(source_img, cv2.COLOR_BGR2RGB)
-        target_img = cv2.imread(target_file, 1)
-        target_img = cv2.cvtColor(target_img, cv2.COLOR_BGR2RGB)
-            
-        warped = cv2.warpPerspective(source_img, H, (target_img.shape[1], target_img.shape[0]))
-        annotated = annotate_fixed_city_points(np.copy(warped), "assets\\0.0 Cropped\\cities11.csv")
-        plt.imshow(annotated)
-        plt.show()
+    source_file="assets\\2.0 Red-Red\\PXL_20220209_150018426.jpg"
+    # for source_file in getImagesInDir("assets\\2.0 Red-Red"):
+        
+    board = find_board(target_file, source_file)
+    
+    # annotated = annotate_fixed_city_points(np.copy(board), "assets\\0.0 Cropped\\cities11.csv")
+    # plt.imshow(annotated)
+    plt.imshow(board)
+    plt.show()
     

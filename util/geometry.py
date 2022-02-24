@@ -6,24 +6,18 @@ class Quadrilateral():
     def __init__(self, p1, p2, p3, p4):
         self.points = np.array([p1, p2, p3, p4], dtype=Point)
         
-        self.max_x = np.array([p.x for p in self.points]).max(0)
-        self.min_x = np.array([p.x for p in self.points]).min(0)
+        self.max_x = np.array([p.x for p in self.points], dtype=np.float32).max(0)
+        self.min_x = np.array([p.x for p in self.points], dtype=np.float32).min(0)
 
-        self.max_y = np.array([p.y for p in self.points]).max(0)
-        self.min_y = np.array([p.y for p in self.points]).min(0)
+        self.max_y = np.array([p.y for p in self.points], dtype=np.float32).max(0)
+        self.min_y = np.array([p.y for p in self.points], dtype=np.float32).min(0)
 
     
-    def plot(self, image=None, show=True):
+    def plot(self, image=None, show=True, colour=None):
         if image is not None:
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        for i in range(-1, len(self.points)-1):
-            x1 = self.points[i].x
-            y1 = self.points[i].y
-
-
-            x2 = self.points[i+1].x
-            y2 = self.points[i+1].y
-            plt.plot((x1, x2), (y1, y2))
+        for boundary in self.getEdgeLines():
+            boundary.plot(show=False, colour=colour)
         if show:
             plt.show()
         
@@ -33,7 +27,7 @@ class Quadrilateral():
             boundaries.append(Segment(*self.points[i], *self.points[i+1]))
         return boundaries
         
-    def isIn(self, point):
+    def isIn(self, point, plot=False):
         # If point is above the minimum or maximum x or y of the whole shape then return false
         if not(isBetween(self.max_x, self.min_x, point.x)) or not(isBetween(self.max_y, self.min_y, point.y)):
             return False
@@ -45,8 +39,9 @@ class Quadrilateral():
         vert_line = Line(np.inf,x_intercept=point.x)
         horz_line = Line(0, intercept=point.y)
         
-        vert_line.plot(show=False)
-        horz_line.plot(show=False)
+        if plot:
+            vert_line.plot(show=False)
+            horz_line.plot(show=False)
         
         
         horz_bounds = set()
@@ -71,8 +66,9 @@ class Quadrilateral():
         horz_bounds = list(horz_bounds)
         vert_bounds = list(vert_bounds)
         
-        for p in [*vert_bounds, *horz_bounds]:
-            p.plot(show=False)
+        if plot:
+            for p in [*vert_bounds, *horz_bounds]:
+             p.plot(show=False)
         
         
         return isBetween(vert_bounds[0].y, vert_bounds[1].y, point.y) and isBetween(vert_bounds[0].x, vert_bounds[1].x, point.x)
@@ -238,11 +234,11 @@ class Segment(Line):
         self.p1 = Point(x0, y0)
         self.p2 = Point(x1, y1)
         
-        self.min_x = np.min([x0, x1])
-        self.max_x = np.max([x0, x1])
+        self.min_x = np.array([x0, x1], dtype=np.float32).min(0)
+        self.max_x = np.array([x0, x1], dtype=np.float32).max(0)
         
-        self.min_y = np.min([y0, y1])
-        self.max_y = np.max([y0, y1])
+        self.min_y = np.array([y0, y1], dtype=np.float32).min(0)
+        self.max_y = np.array([y0, y1], dtype=np.float32).max(0)
         
         if x0 == x1:
             self.grad = np.inf 
@@ -262,21 +258,17 @@ class Segment(Line):
         else:
             return NonePoint()
         
-    def plot(self, image=None, show=True):
+    def plot(self, image=None, show=True, colour=None):
             
-        line_points = []
-        
-        if self.is_horizontal():
-            line_points = [(self.min_x, self.max_x), (self.get_y(self.min_x), self.get_y(self.max_x))]
-        elif self.is_vertical():
-            line_points = [(self.get_x(self.min_y), self.get_x(self.max_y)), (self.min_y, self.max_y)]
-        else:
-            line_points = [(self.get_x(self.min_y), self.get_x(self.min_y)), (self.get_y(self.min_x), self.get_y(self.max_x))]
+        line_points = [(self.p1.x, self.p2.x), (self.p1.y, self.p2.y)]
         
         if image is not None:
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         
-        plt.plot(*line_points)
+        if colour is not None:
+            plt.plot(*line_points, colour)
+        else:
+            plt.plot(*line_points)
         
         if show:
             plt.show()
@@ -299,13 +291,13 @@ if __name__ == "__main__":
     q = Quadrilateral(p1, p2, p3, p4)
     
     q.plot(show=False)
-    p5.plot(show=False)
+    # p5.plot(show=False)
     
     
     plt.xlim(q.min_x-1, q.max_x+1)
     plt.ylim(q.min_y-1, q.max_y+1)
     
-    print(q.isIn(p5))
+    print(q.isIn(p5, plot=True))
     
     
     plt.show()
