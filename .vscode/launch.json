@@ -10,6 +10,27 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: show_train_blocks",
+            "type": "python",
+            "request": "launch",
+            "program": "train_detection\\show_train_blocks.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: main",
+            "type": "python",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: feature_detection",
+            "type": "python",
+            "request": "launch",
+            "program": "board_handling\\feature_detection.py",
+            "console": "integratedTerminal"
         }
     ]
 }
