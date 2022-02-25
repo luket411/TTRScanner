@@ -29,10 +29,7 @@ class BoardSegment(Quadrilateral):
     def getColour(self):
         return self.colour
 
-    def getAvgColour(self, image, show=False):
-        # plt.imshow(image[self.min_y_int:self.max_y_int, self.min_x_int:self.max_x_int])
-        # plt.show()
-        
+    def getAvgColour(self, image, show=False, snippet_output_file=None):      
         
         avg_col = np.zeros((3), dtype=np.float32)
         area = 0
@@ -49,7 +46,7 @@ class BoardSegment(Quadrilateral):
     
         avg_col /= area
 
-        if show:
+        if show or snippet_output_file is not None:
             _, plots = plt.subplots(2)
             plots[0].imshow(out)
             out = np.full((self.height_int, self.width_int, 3), [209, 247, 255])
@@ -61,9 +58,12 @@ class BoardSegment(Quadrilateral):
                 out[i] = row
 
             plots[1].imshow(out)
-            # plt.show()
-            file_name = len(listdir("assets\\general\\base"))
-            plt.savefig(f"assets\\general\\base\\{file_name+1}.png")
+            
+            if show:
+                plt.show()
+            else:
+                plt.savefig(snippet_output_file)
+
         return avg_col
 
 
