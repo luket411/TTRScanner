@@ -42,8 +42,8 @@ def main():
         print(coords)
         warped_image = transform_board(img, coords)
         plt.imshow(warped_image)
-        file_name = len(listdir("assets\\0.0 Cropped"))
-        cv2.imwrite(f"assets\\0.0 Cropped\\{file_name+1}.png", cv2.cvtColor(warped_image, cv2.COLOR_BGR2RGB))
+        file_name = len(listdir("assets/0.0 Cropped"))
+        cv2.imwrite(f"assets/0.0 Cropped/{file_name+1}.png", cv2.cvtColor(warped_image, cv2.COLOR_BGR2RGB))
         plt.show()
 
 

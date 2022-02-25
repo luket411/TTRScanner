@@ -23,7 +23,7 @@ def onclick(event):
     
     
 
-avg_img_file = "assets\\0.0 Cropped\\11.png"
+avg_img_file = "assets/0.0 Cropped/11.png"
 avg_img = cv2.imread(avg_img_file, 1)
 avg_img = cv2.cvtColor(avg_img, 4)
 fig = plt.figure(1)

@@ -55,6 +55,6 @@ class ImageDataset():
 
 
 if __name__ == "__main__":
-    images = ImageFileDataset("assets\\1.0 Blank")
+    images = ImageFileDataset("assets/1.0 Blank")
     for i in images:
         print(i)

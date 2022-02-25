@@ -10,8 +10,8 @@ from csv import reader
 from util.geometry import Point
 from train_detection.BoardSegment import BoardSegment
 
-base_img = "assets\\0.0 Cropped\\11.png"
-train_layout = "assets\\0.0 Cropped\\trains11.csv"
+base_img = "assets/0.0 Cropped/11.png"
+train_layout = "assets/0.0 Cropped/trains11.csv"
 
 COLOURS = [
     "r",                #0 - Red
