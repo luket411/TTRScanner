@@ -1,6 +1,6 @@
 from sys import path
 from os import path as ospath
-path.append(f'{ospath.dirname(__file__)}/..')
+path.append(ospath.join(ospath.dirname(__file__), ".."))
 import numpy as np
 import cv2
 from datasets.cities import cities_loader

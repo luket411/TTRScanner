@@ -1,3 +1,6 @@
+from sys import path
+from os import path as ospath
+path.append(ospath.join(ospath.dirname(__file__), ".."))
 from os import listdir
 import cv2
 from train_detection.show_train_blocks import get_train_segments

@@ -1,7 +1,6 @@
 from sys import path
 from os import path as ospath, listdir
-path.append(ospath.join(ospath.dirname(__file__), "datasets"))
-path.append(ospath.join(ospath.dirname(__file__), "board_handling"))
+path.append(ospath.join(ospath.dirname(__file__), ".."))
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
