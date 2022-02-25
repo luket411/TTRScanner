@@ -23,7 +23,6 @@ def generate_sample_images(output_dir, image_file, train_data_file):
             
             print(f"{i+1}/{len(train_segments)}: {avg}")
             out_string_colours += f"{i+1},{avg[0]},{avg[1]},{avg[2]}\n"
-            break
         except KeyboardInterrupt:
             print (out_string_colours)
             exit()
