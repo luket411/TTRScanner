@@ -1,5 +1,5 @@
 from sys import path
-from os import path as ospath, listdir
+from os import path as ospath
 path.append(ospath.join(ospath.dirname(__file__), ".."))
 
 import matplotlib.pyplot as plt
