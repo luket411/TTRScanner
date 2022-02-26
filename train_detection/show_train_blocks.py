@@ -47,7 +47,7 @@ def plot_train_segments(train_segments):
 
 def get_train_segments(layout_file):
     corners = read_layout_csv(layout_file)
-    train_segments = [BoardSegment(corner_set[0], *corner_set[1]) for corner_set in corners]
+    train_segments = [BoardSegment(corner_set[0], *corner_set[1], i+1) for i, corner_set in enumerate(corners)]
     return train_segments
 
 def label_image_train_segments(img=None, layout_file=train_layout):

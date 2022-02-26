@@ -39,7 +39,7 @@ def generate_sample_images(output_dir, image_file, train_data_file):
 
 
 generate_sample_images(
-    "assets/general/base",
+    "assets/general/misc",
     "assets/2.1 Red-Yellow,Green,Gray/PXL_20220209_151741865.jpg",
     "assets/0.0 Cropped/trains11.csv"
 )
