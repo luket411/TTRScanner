@@ -71,10 +71,6 @@ def find_homography_between_images(source_img, target_img):
     
     np.random.shuffle(possiblyCorrectMatches)
     
-    print(possiblyCorrectMatches.shape)
-    print(targetpts.shape)
-    print(sourcepts.shape)
-    
     H = cv2.findHomography(sourcepts, targetpts, cv2.RANSAC, 20.0)[0]
     
     # draw_matches(possiblyCorrectMatches, source_img, source_keypoints, target_img, target_keypoints)
@@ -83,8 +79,6 @@ def find_homography_between_images(source_img, target_img):
     #     xy = H @ np.array([[sourcepts[i,0]], [sourcepts[i,1]], [1]])
     #     x = xy[0]/xy[2]
     #     y = xy[1]/xy[2]
-    #     print(f"\n{x[0]},{y[0]}")
-    #     print(targetpts[i])
     
     return H
     
