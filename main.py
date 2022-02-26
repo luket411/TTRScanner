@@ -2,14 +2,15 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from board_handling.feature_detection import find_board
-from train_detection.show_train_blocks import label_image_train_segments
-
+from train_detection.map_construction import Map
 
 def main(target_file):
     base_file = "assets/0.0 Cropped/11.png"
     train_location_data = "assets/0.0 Cropped/trains11.csv"
+    
     board = find_board(base_file, target_file)
-    label_image_train_segments(board, layout_file=train_location_data)
+    map = Map()
+    map.plot(board)
     plt.show()
 
 if __name__ == "__main__":
