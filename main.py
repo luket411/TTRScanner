@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from board_handling.feature_detection import find_board
-from train_detection.map_construction import Map
+from train_detection.Map import Map
 
 def main(target_file):
     base_file = "assets/0.0 Cropped/11.png"
