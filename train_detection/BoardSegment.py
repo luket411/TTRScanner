@@ -1,9 +1,13 @@
+from sys import path
+from os import path as ospath
+path.append(f'{ospath.dirname(__file__)}/..')
+
 import numpy as np
-from util.geometry import Quadrilateral, Point
 import matplotlib.pyplot as plt
 from math import ceil
 import cv2
-from os import listdir
+
+from util.geometry import Quadrilateral, Point
 from util.timer import timer
 
 class BoardSegment(Quadrilateral):

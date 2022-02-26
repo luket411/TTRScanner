@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from util.geometry import Point
 from train_detection.BoardSegment import BoardSegment
 
+## This file needs breaking up. Possibly into a Map (with Map and Connection classes), readers (with the three csv readers) and then leave the others in here as an example/ tester
 
 COLOURS = [
     "r",                #0 - Red
