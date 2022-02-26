@@ -89,14 +89,18 @@ def find_homography_between_images(source_img, target_img):
     return H
     
 def find_board(target_file, source_file):
-    H = main(
-        target_file=target_file,
-        source_file=source_file
-    )
     source_img = cv2.imread(source_file, 1)
-    source_img = cv2.cvtColor(source_img, cv2.COLOR_BGR2RGB)
+    if source_img is None:
+        raise Exception(f"'{source_file}' could not opened")
+    
     target_img = cv2.imread(target_file, 1)
+    if target_img is None:
+        raise Exception(f"'{target_file}' could not opened")
+
+    source_img = cv2.cvtColor(source_img, cv2.COLOR_BGR2RGB)
     target_img = cv2.cvtColor(target_img, cv2.COLOR_BGR2RGB)
+
+    H = find_homography_between_images(source_img, target_img)
         
     warped = cv2.warpPerspective(source_img, H, (target_img.shape[1], target_img.shape[0]))
     return warped
