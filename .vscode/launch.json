@@ -15,7 +15,7 @@
             "name": "Python: show_train_blocks",
             "type": "python",
             "request": "launch",
-            "program": "train_detection\\show_train_blocks.py",
+            "program": "train_detection/show_train_blocks.py",
             "console": "integratedTerminal"
         },
         {
@@ -29,7 +29,14 @@
             "name": "Python: feature_detection",
             "type": "python",
             "request": "launch",
-            "program": "board_handling\\feature_detection.py",
+            "program": "board_handling/feature_detection.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: feature_detection_normalisation",
+            "type": "python",
+            "request": "launch",
+            "program": "board_handling/feature_detection_with_colour_normalisation.py",
             "console": "integratedTerminal"
         }
     ]

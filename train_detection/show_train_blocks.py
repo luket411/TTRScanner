@@ -62,6 +62,15 @@ def label_image_train_segments(img=None, layout_file=train_layout):
 
 
 if __name__ == "__main__":
+    img = cv2.imread(base_img)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    train_segments = get_train_segments(train_layout)
+    segment = train_segments[0]
+
+    segment.getAvgColour(img)
+    segment.plot(show=True, image=img)
+    exit()
     label_image_train_segments()
     plt.show()
     

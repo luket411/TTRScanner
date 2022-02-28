@@ -8,17 +8,12 @@ import matplotlib.pyplot as plt
 from util.timer import timer
 from board_handling.feature_detection import find_board
 
-
 @timer
 def generate_sample_images(output_dir, image_file, train_data_file):
     
     train_segments = get_train_segments(train_data_file)
-    
-    # img = cv2.imread(image_file, 1)
-    # img = cv2.cvtColor(img, 4)
     base_file = "assets/0.0 Cropped/11.png"
     img = find_board(base_file, image_file)
-
 
     out_string_colours = ""
     
@@ -26,7 +21,6 @@ def generate_sample_images(output_dir, image_file, train_data_file):
         try:
             
             file_name = len(listdir(output_dir))
-            
             avg = segment.getAvgColour(img, snippet_output_file=f"{output_dir}/{file_name+1}.png")
             
             print(f"{i+1}/{len(train_segments)}: {avg}")
@@ -39,7 +33,7 @@ def generate_sample_images(output_dir, image_file, train_data_file):
 
 
 generate_sample_images(
-    "assets/general/misc",
+    "assets/general/filler",
     "assets/2.1 Red-Yellow,Green,Gray/PXL_20220209_151741865.jpg",
     "assets/0.0 Cropped/trains11.csv"
 )
