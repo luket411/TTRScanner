@@ -38,6 +38,13 @@
             "request": "launch",
             "program": "board_handling/feature_detection_with_colour_normalisation.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: full_board_pipeline",
+            "type": "python",
+            "request": "launch",
+            "program": "board_edge_detection/full_board_pipeline.py",
+            "console": "integratedTerminal"
         }
     ]
 }
