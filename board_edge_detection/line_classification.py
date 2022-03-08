@@ -4,7 +4,7 @@ from sys import path
 from os import path as ospath
 path.append(f'{ospath.dirname(__file__)}/..')
 import numpy as np
-from coordinates_system import Line
+from board_edge_detection.coordinates_system import Line
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans, SpectralClustering
 from sklearn import preprocessing

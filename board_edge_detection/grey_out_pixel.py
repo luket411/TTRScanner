@@ -21,7 +21,7 @@ def main(img = None, lower_percentile=10):
         img = cv2.imread('assets\clean_board.jpg', 1)
     ymax = img.shape[0]
     xmax = img.shape[1]
-    n = 25
+    n = 250
     selections = [
         [[xmax-n, 0], [xmax, ymax]],
         [[0,0], [n, ymax]],

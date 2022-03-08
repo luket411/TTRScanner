@@ -6,10 +6,9 @@ path.append(ospath.join(ospath.dirname(__file__), ".."))
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from grey_out_pixel import main as get_image_board_outline
-# from util.geometry import Line
+from board_edge_detection.grey_out_pixel import main as get_image_board_outline
 from board_edge_detection.coordinates_system import Line
-from line_classification import find_lines, normalise_infs_nans
+from board_edge_detection.line_classification import find_lines, normalise_infs_nans
 
 def show(img):
     img = cv2.cvtColor(img, 4)
@@ -51,15 +50,18 @@ def find_corners(img_file, show_output=False, debug_print=False):
     lines, labels = classify_lines(norm_grads, *line_details)
     edges = define_edges(lines, labels, debug_print=debug_print)
     corners = find_intersection_points(edges)
-
+    print(edges)
 
     if show_output:
         colours = [[0,200,0],[200,0,0],[0,0,200],[3, 252, 244]]
         output = cv2.cvtColor(canny_edges, cv2.COLOR_GRAY2RGB)
         if show_output:
             for i, edge in enumerate(edges):
-                output = edge.plot(output, colours[i])
-    
+                try:
+                    output = edge.plot(output, colours[i])
+                except ValueError:
+                    print(f"Missing Line {i}")
+
         show(output)
 
     return corners
