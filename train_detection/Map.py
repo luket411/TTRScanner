@@ -20,7 +20,7 @@ class Map():
         for connection_info in read_segment_file(segment_info):
             city1 = connection_info[0][0]
             city2 = connection_info[0][1]
-            connection_colour = train_layouts[connection_info[1][0]][0]
+            connection_colour = train_layouts[connection_info[1][0]-1][0]
             segments = []
             for segment_index in connection_info[1]:
                 coordinates = train_layouts[segment_index-1][1]

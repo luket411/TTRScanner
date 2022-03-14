@@ -28,11 +28,13 @@ def read_segment_file(segment_file):
         headers = file_reader.__next__()[1:]
         for line in file_reader:
             city1 = line[0]
-            for i, segment in enumerate(line[1:]):
-                if segment:
+            for i, connection in enumerate(line[1:]):
+                if connection:
                     city2 = headers[i]
-                    segment = np.array(segment.split(","), dtype=np.int16)
-                    connections.append([[city1, city2], segment])
+                    sub_connections = np.array(connection.split(":"))
+                    for sub_connection in sub_connections:
+                        sub_connection = np.array(sub_connection.split(","), dtype=np.int16)
+                        connections.append([[city1, city2], sub_connection])
     return connections
 
 def read_layout_csv(layout_file):
