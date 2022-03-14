@@ -58,7 +58,7 @@ def read_base_colours_file(colours_file):
         for line in file_reader:
             colours.append(line[1:])
     
-    return np.array(colours, dtype=np.float32)
+    return np.uint8(np.array(colours, dtype=np.float32))
 
 def validate_segment_dataset(filename):
     with open(filename) as open_file:
