@@ -21,7 +21,7 @@ def generate_sample_images(output_dir, image_file, train_data_file):
         try:
             
             file_name = len(listdir(output_dir))
-            avg = segment.getAvgColour(img, snippet_output_file=f"{output_dir}/{file_name+1}.png")
+            avg = segment.getAverageColour(img, snippet_output_file=f"{output_dir}/{file_name+1}.png")
             
             print(f"{i+1}/{len(train_segments)}: {avg}")
             out_string_colours += f"{i+1},{avg[0]},{avg[1]},{avg[2]}\n"

@@ -12,7 +12,7 @@ class Connection():
     def __init__(self, start, dest, segments, base_colour):
         self.start = start
         self.dest = dest
-        self.segments: list(BoardSegment) = segments
+        self.segments = segments
         self.size = len(self.segments)
         self.base_colour = base_colour
 
@@ -22,33 +22,22 @@ class Connection():
     def __repr__(self):
         return f"{self.start}->{self.dest}:{self.segments}"
 
-    def plot(self, image=None, show=False, label=False, image_focus=None, fill_base=False, fill_avg=False, show_outline=True):
-        for segment in self.segments:
-            segment: BoardSegment
-
-            if show_outline or label:
-                segment.plot(label=label)
-
-            if image is not None:
-                if fill_base:
-                    image = segment.fill_segment(image, segment.base_colour)
-                elif fill_avg:
-                    image = segment.fill_segment(image, segment.getAvgColour(image))
-
-        
+    def plot(self, image=None, show=False, label=False, image_focus=None, fill=False, use_avg_colour=False):
         if image is not None:
-
-            if fill_base:
-                image = segment.fill_segment(image, segment.base_colour)
-            elif fill_avg:
-                image = segment.fill_segment(image, segment.getAvgColour(image))
-
-            plt.imshow(image)
+            plt.imshow(image)    
             if image_focus:
                 dimension_range = self.getDisplayRange()
                 plt.xlim(dimension_range[0], dimension_range[1])
                 plt.ylim(dimension_range[3], dimension_range[2])
 
+        colour_val = None
+        for segment in self.segments:
+            segment: BoardSegment
+
+            if use_avg_colour:
+                colour_val = segment.getAverageColour(image) 
+            
+            segment.plot(label=label, fill=fill, colour=colour_val)
         if show:
             plt.show()
 

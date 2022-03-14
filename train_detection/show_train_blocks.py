@@ -68,7 +68,7 @@ if __name__ == "__main__":
     train_segments = get_train_segments(train_layout)
     segment = train_segments[0]
 
-    segment.getAvgColour(img)
+    segment.getAverageColour(img)
     segment.plot(show=True, image=img)
     exit()
     label_image_train_segments()

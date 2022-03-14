@@ -11,17 +11,24 @@ class Quadrilateral():
     def __init__(self, p1, p2, p3, p4):
         self.points = np.array([p1, p2, p3, p4], dtype=Point)
         
-        self.max_x = np.array([p.x for p in self.points], dtype=np.float32).max(0)
-        self.min_x = np.array([p.x for p in self.points], dtype=np.float32).min(0)
+        self._xs = np.array([p.x for p in self.points], dtype=np.float32)
+        self._ys = np.array([p.y for p in self.points], dtype=np.float32)
+        
+        self.max_x = self._xs.max(0)
+        self.min_x = self._xs.min(0)
 
-        self.max_y = np.array([p.y for p in self.points], dtype=np.float32).max(0)
-        self.min_y = np.array([p.y for p in self.points], dtype=np.float32).min(0)
+        self.max_y = self._ys.max(0)
+        self.min_y = self._ys.min(0)
 
-    def plot(self, image=None, show=False, colour=None):
+    def plot(self, image=None, show=False, colour=None, fill=False):
+        colour = np.array(colour/255, np.float32)
         if image is not None:
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        for boundary in self.getEdgeLines():
-            boundary.plot(show=False, colour=colour)
+        if fill:
+            plt.fill(self._xs, self._ys, color=colour)
+        else:
+            for boundary in self.getEdgeLines():
+                boundary.plot(show=False, colour=colour)
         if show:
             plt.show()
 
@@ -226,7 +233,6 @@ class Segment(Line):
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         
         if colour is not None:
-            colour = np.array(colour/255, np.float32)
             plt.plot(*line_points, color=colour)
         else:
             plt.plot(*line_points)

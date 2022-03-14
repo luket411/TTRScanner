@@ -35,6 +35,7 @@ class BoardSegment(Quadrilateral):
     def containsCarriage(self):
         return False
 
+    # Deprecated
     @timer
     def getAvgColour(self, image, show=False, snippet_output_file=None):
         avg_col = np.zeros((3), dtype=np.float32)
@@ -62,23 +63,26 @@ class BoardSegment(Quadrilateral):
                     avg_col += image[y,x]
                     area += 1
             out[i] = row
-    
+
         avg_col /= area
 
-        if show or snippet_output_file is not None:
-            _, plots = plt.subplots(3)
+        # if show or snippet_output_file is not None:
+        #     _, plots = plt.subplots(3)
 
-            plots[0].imshow(out.astype(np.float32))
-            plots[1].imshow(self.get_filled_snippet(image, avg_col)[self.min_y_int:self.max_y_int, self.min_x_int:self.max_x_int])
-            plots[2].imshow(self.get_filled_snippet(image, self.base_colour)[self.min_y_int:self.max_y_int, self.min_x_int:self.max_x_int])
+        #     plots[0].imshow(out.astype(np.float32))
+        #     plots[1].imshow(self.fill_segment(image, avg_col)[self.min_y_int:self.max_y_int, self.min_x_int:self.max_x_int])
+        #     plots[2].imshow(self.fill_segment(image, self.base_colour)[self.min_y_int:self.max_y_int, self.min_x_int:self.max_x_int])
             
-            if show:
-                plt.show()
-            if snippet_output_file is not None:
-                plt.savefig(snippet_output_file)
+        #     if show:
+        #         plt.show()
+        #     if snippet_output_file is not None:
+        #         plt.savefig(snippet_output_file)
 
         return np.uint8(avg_col)
 
+    ## region bad deprecated methods ##
+
+    # Deprecated
     def get_snippet_mask(self):
         out = np.full((self.height_int, self.width_int), 0, dtype=np.uint8)
         for i, y in enumerate(range(self.min_y_int, self.max_y_int)):
@@ -89,18 +93,22 @@ class BoardSegment(Quadrilateral):
             out[i] = row
         return out
 
+    # Deprecated
     def get_full_board_mask(self, board):
         full_board_mask = np.zeros(board.shape[0:2], dtype=np.uint8)
         full_board_mask[self.min_y_int:self.max_y_int, self.min_x_int:self.max_x_int] = self.get_snippet_mask()
         return full_board_mask
 
+    # Deprecated
     def get_snippet_image(self, board):
         return cv2.bitwise_and(board, board, mask=self.get_full_board_mask(board))
 
-    @timer
+    # Deprecated
     def fill_segment(self, board, col):
 
-        mask=self.get_full_board_mask(board)
+        # mask=self.get_full_board_mask(board)
+        mask = self.get_snippet_mask()
+        board = np.zeros((*mask.shape, 3), dtype=np.uint8)
 
         maskx3 = np.zeros((*mask.shape, 3))
         maskx3[:,:,0] = mask
@@ -110,25 +118,42 @@ class BoardSegment(Quadrilateral):
         snipped_image = np.where(maskx3[:,:] == [0,0,0], board, col)
 
         return snipped_image
+    
+    ## end region bad deprecated methods ##
 
     def getPixels(self, image):
-        np.zeros((self.max_x, self.max_y), dtype=np.float32)        
-        return []
+        pixels = []
+        for i, y in enumerate(range(self.min_y_int, self.max_y_int)):
+            for j, x in enumerate(range(self.min_x_int, self.max_x_int)):
+                if Point(x, y).within(self):
+                    pixels.append(image[y,x])
+        return np.uint8(pixels)
     
-    def plot(self, image=None, show=False, label=False, fill_base=False, fill_avg=False):
+    @timer
+    def getAverageColour(self, image):
+        return np.average(self.getPixels(image), axis=0)
+    
+    def plot(self, image=None, show=False, label=False, fill=False, colour=None):
+        
+        colour_val = self.base_colour
+        if colour is not None:
+            colour_val = colour
+        
         if image is not None:
-            if fill_base:
-                image = self.fill_segment(image, self.base_colour)
-            elif fill_avg:
-                image = self.fill_segment(image, self.getAvgColour(image))
             plt.imshow(image)
             plt.ylim(self.max_y_int, self.min_y_int)
             plt.xlim(self.max_x_int, self.min_x_int)
+        
+                
+            
         if label:
             avg_x = np.average([self.min_x, self.max_x])
             avg_y = np.average([self.min_y, self.max_y])
             plt.text(avg_x, avg_y, self.id, fontsize='5')
-        super().plot(colour=self.base_colour)
+        
+        
+        super().plot(fill=fill, colour=colour_val)
+
         if show:
             plt.show()
 
