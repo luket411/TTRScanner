@@ -54,7 +54,30 @@ class Connection():
 
     #ToDo: Implement function. Should return colour of pieces if there is one and False otherwise
     def hasTrain(self, board):
-        return
+
+        diffs = []
+
+        segment: BoardSegment
+        for segment in self.segments:
+            diffs.append(segment.containsCarriage(board))
+
+        diffs = np.array(diffs)
+
+        median_diff = np.empty(3)
+        median_diff[0] = np.median(diffs[:,0])
+        median_diff[1] = np.median(diffs[:,1])
+        median_diff[2] = np.median(diffs[:,2])
+        print(f"median_diff = {median_diff}")
+
+        avg_diff = np.empty(3)
+        avg_diff[0] = np.average(diffs[:,0])
+        avg_diff[1] = np.average(diffs[:,1])
+        avg_diff[2] = np.average(diffs[:,2])
+        print(f"avg_diff = {avg_diff}")
+
+        guess = np.linalg.norm(median_diff - avg_diff)
+        print(f"{guess}\n")
+        return guess
 
     def getDisplayRange(self):
         max_x, max_y = -np.inf, -np.inf

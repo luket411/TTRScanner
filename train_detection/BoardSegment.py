@@ -32,8 +32,13 @@ class BoardSegment(Quadrilateral):
         self.width_int = self.max_x_int - self.min_x_int
 
     # Return num between 0 and 1 that the carriage has changed
-    def containsCarriage(self):
-        return False
+    def containsCarriage(self, board):
+        avg = self.getAvgColour(board)
+        # print(f"Base_Colour: {self.base_colour}")
+        # print(f"Average_Colour: {avg}")
+        diff = self.base_colour - avg
+        # print(f"diff: {diff}")
+        return diff
 
     @timer
     def getAvgColour(self, image, show=False, snippet_output_file=None):
