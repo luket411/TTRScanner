@@ -226,7 +226,8 @@ class Segment(Line):
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         
         if colour is not None:
-            plt.plot(*line_points, colour)
+            colour = np.array(colour/255, np.float32)
+            plt.plot(*line_points, color=colour)
         else:
             plt.plot(*line_points)
         

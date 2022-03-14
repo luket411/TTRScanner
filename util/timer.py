@@ -12,7 +12,7 @@ def timer(func):
             t = time()
             val = func(*args, **kwargs)
             t = time() - t
-            print(f"Time Taken: {t}s")
+            print(f"Time Taken for function {ospath.basename(func.__code__.co_filename)}@{func.__code__.co_firstlineno}:{func.__name__}: {t}:s")
         else:
             val = func(*args, **kwargs)
         return val
