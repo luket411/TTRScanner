@@ -87,5 +87,14 @@ def validate_segment_dataset(filename):
     print("Dataset valid, all 300 segments accounted for")
 
 
+def read_connections(dirname):
+    filename = ospath.join(dirname, "labelled_connections.csv")
+    with open(filename) as open_file:
+        out = {}
+        file_reader = reader(open_file)
+        for line in file_reader:
+            out[line[0]] = line[1:]
+    return out
+
 if __name__ == "__main__":
     validate_segment_dataset('assets/segment_info.csv')

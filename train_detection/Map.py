@@ -17,7 +17,7 @@ class Map():
         train_layouts = read_layout_csv(layout_info)
         base_colours = read_base_colours_file(layout_colours)
 
-        for connection_info in read_segment_file(segment_info):
+        for i, connection_info in enumerate(read_segment_file(segment_info)):
             city1 = connection_info[0][0]
             city2 = connection_info[0][1]
             connection_colour = train_layouts[connection_info[1][0]-1][0]
@@ -27,7 +27,7 @@ class Map():
                 base_colour = base_colours[segment_index-1]
                 segments.append(BoardSegment(base_colour, *coordinates, segment_index))
             
-            self.connections.append(Connection(city1, city2, segments, connection_colour))
+            self.connections.append(Connection(city1, city2, segments, connection_colour, i))
 
     def plot(self, image=None, show=False, label=False):
         for connection in self.connections:

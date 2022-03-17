@@ -97,7 +97,7 @@ def find_board(target_file, source_file):
     H = find_homography_between_images(source_img, target_img)
         
     warped = cv2.warpPerspective(source_img, H, (target_img.shape[1], target_img.shape[0]))
-    return warped
+    return warped, target_img
 
 if __name__ == "__main__":
     target_file="assets/0.0 Cropped/11.png"

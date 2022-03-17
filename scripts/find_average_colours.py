@@ -9,8 +9,6 @@ from train_detection.data_readers import read_layout_csv
 from train_detection.BoardSegment import BoardSegment
 from util.geometry import Point
 
-from scripts.histogram_equalisation import stackOverflowMethod
-
 def main(source_image, layout_file='assets/0.0 Cropped/trains11.csv'):
     
     outstring =""
@@ -29,15 +27,10 @@ def main(source_image, layout_file='assets/0.0 Cropped/trains11.csv'):
         
         # break
     
-    plt.show()
-    
     print(outstring)
     
 
 if __name__ == "__main__":
-    img = cv2.imread('assets/0.0 Cropped/11.png', 1)
-    img = stackOverflowMethod(img)
+    img = cv2.imread('assets/0.0 Cropped/3.png', 1)
     img = cv2.cvtColor(img, 4)
-    plt.imshow(img)
-    plt.show()
     main(img)

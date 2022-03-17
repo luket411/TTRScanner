@@ -1,32 +1,43 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from concurrent import futures
+
 from board_handling.feature_detection import find_board
 from train_detection.Connection import Connection
 from train_detection.Map import Map
+from util.timer import timer
 
 def main(target_file):
-    base_file = "assets/0.0 Cropped/11.png"
-    train_location_data = "assets/0.0 Cropped/trains11.csv"
+    v = 11
+    base_file = f"assets/0.0 Cropped/{v}.png"
+    train_location_data = f"assets/0.0 Cropped/trains{v}.csv"
+    layout_colours = f"assets/0.0 Cropped/avg_colours{v}.csv"
     
-    board = find_board(base_file, target_file)
-    map = Map()
     
-    connection: Connection
+    board, base_board = find_board(base_file, target_file)
+    map = Map(layout_colours=layout_colours, layout_info=train_location_data)
     
-    connection = np.random.choice(map.connections)
+    x = run_multicore(map, board)
+    print(x)
+    # run_singlecore(map, board)
 
-    print(connection)
-    print(connection.segments[0])
-    connection.segments[0].getAvgColour(board)
-    connection.segments[0].getAverageColour(board)
-    # connection.plot(
-        # image=board, 
-        # show=True,
-        # fill=True,
-        # use_avg_colour=True,
-        # image_focus=True
-        # )
+@timer
+def run_multicore(map, board):
+    results = []
+    with futures.ProcessPoolExecutor() as executor:
+        processes = [executor.submit(connection.hasTrain, board) for connection in map.connections]
+        for process in processes:
+            results.append(process.result())
+    return results
+
+@timer
+def run_singlecore(map, board):
+    results = []
+    for connection in map.connections:
+        results.append(connection.hasTrain(board))
+    return results
+
 
 if __name__ == "__main__":
     main("assets/0.0 Cropped/11.png")

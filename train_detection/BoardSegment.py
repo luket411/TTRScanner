@@ -32,8 +32,29 @@ class BoardSegment(Quadrilateral):
         self.width_int = self.max_x_int - self.min_x_int
 
     # Return num between 0 and 1 that the carriage has changed
-    def containsCarriage(self):
-        return False
+    def containsCarriage(self, board, isGray=False):
+        avg_col = self.getMedianColour(board)
+        base_col = self.base_colour
+
+        # if isGray:
+        #     return np.linalg.norm(avg_col - base_col)
+
+
+        conversion_image = np.array([[avg_col, base_col]], dtype=np.float32)
+
+        hsv_image = cv2.cvtColor(conversion_image, cv2.COLOR_RGB2HSV)[0]
+
+        avg_hsv = hsv_image[0][0] % 180
+        base_hsv = hsv_image[1][0] % 180
+
+        diff = abs(avg_hsv - base_hsv)
+
+
+        if diff > 90:
+            diff = diff - 90
+
+        return diff
+
 
     # Deprecated
     @timer
@@ -132,6 +153,9 @@ class BoardSegment(Quadrilateral):
     @timer
     def getAverageColour(self, image):
         return np.average(self.getPixels(image), axis=0)
+
+    def getMedianColour(self, image):
+        return np.median(self.getPixels(image), axis=0)
     
     def plot(self, image=None, show=False, label=False, fill=False, colour=None):
         
@@ -149,7 +173,7 @@ class BoardSegment(Quadrilateral):
         if label:
             avg_x = np.average([self.min_x, self.max_x])
             avg_y = np.average([self.min_y, self.max_y])
-            plt.text(avg_x, avg_y, self.id, fontsize='5')
+            plt.text(avg_x, avg_y, self.id, fontsize='15')
         
         
         super().plot(fill=fill, colour=colour_val)
