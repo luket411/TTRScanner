@@ -101,46 +101,6 @@ class BoardSegment(Quadrilateral):
 
         return np.uint8(avg_col)
 
-    ## region bad deprecated methods ##
-
-    # Deprecated
-    def get_snippet_mask(self):
-        out = np.full((self.height_int, self.width_int), 0, dtype=np.uint8)
-        for i, y in enumerate(range(self.min_y_int, self.max_y_int)):
-            row = np.full((self.width_int), 0, dtype=np.uint8)
-            for j, x in enumerate(range(self.min_x_int, self.max_x_int)):
-                if Point(x, y).within(self):
-                    row[j] = 1
-            out[i] = row
-        return out
-
-    # Deprecated
-    def get_full_board_mask(self, board):
-        full_board_mask = np.zeros(board.shape[0:2], dtype=np.uint8)
-        full_board_mask[self.min_y_int:self.max_y_int, self.min_x_int:self.max_x_int] = self.get_snippet_mask()
-        return full_board_mask
-
-    # Deprecated
-    def get_snippet_image(self, board):
-        return cv2.bitwise_and(board, board, mask=self.get_full_board_mask(board))
-
-    # Deprecated
-    def fill_segment(self, board, col):
-
-        # mask=self.get_full_board_mask(board)
-        mask = self.get_snippet_mask()
-        board = np.zeros((*mask.shape, 3), dtype=np.uint8)
-
-        maskx3 = np.zeros((*mask.shape, 3))
-        maskx3[:,:,0] = mask
-        maskx3[:,:,1] = mask
-        maskx3[:,:,2] = mask
-
-        snipped_image = np.where(maskx3[:,:] == [0,0,0], board, col)
-
-        return snipped_image
-    
-    ## end region bad deprecated methods ##
 
     def getPixels(self, image):
         pixels = []
