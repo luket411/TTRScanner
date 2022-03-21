@@ -117,8 +117,8 @@ class BoardSegment(Quadrilateral):
     def getMedianColour(self, image):
         return np.median(self.getPixels(image), axis=0)
     
-    def plot(self, image=None, show=False, label=False, fill=False, colour=None):
-        
+    def plot(self, image=None, show=False, label=False, fill=False, colour=None, label_connection=None):
+
         colour_val = self.base_colour
         if colour is not None:
             colour_val = colour
@@ -130,11 +130,15 @@ class BoardSegment(Quadrilateral):
         
                 
             
-        if label:
-            avg_x = np.average([self.min_x, self.max_x])
-            avg_y = np.average([self.min_y, self.max_y])
-            plt.text(avg_x, avg_y, self.id, fontsize='15')
-        
+        if label or label_connection:
+            params = {'fontsize':10}
+            params['x'] = np.average([self.min_x, self.max_x])
+            params['y'] = np.average([self.min_y, self.max_y])
+            if label_connection:
+                params['s'] = label_connection
+            else:
+                params['s'] = self.id
+            plt.text(**params)
         
         super().plot(fill=fill, colour=colour_val)
 

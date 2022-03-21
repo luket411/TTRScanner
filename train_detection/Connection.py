@@ -38,8 +38,16 @@ class Connection():
 
             if use_avg_colour:
                 colour_val = segment.getAverageColour(image) 
-            
-            segment.plot(fill=fill, colour=colour_val, label=label)
+
+            params = dict(fill=fill, colour=colour_val)
+
+            if label:
+                params['label_connection'] = self.id
+
+            # print(params)
+
+            segment.plot(**params)
+        
         if show:
             plt.show()
 
@@ -50,6 +58,13 @@ class Connection():
             outsum.append(segment.base_colour)
         return np.average(outsum, axis=0)
 
+    def getPixels(self, board):
+        pixels = []
+        segment: BoardSegment
+        for segment in self.segments:
+            pixels.append(segment.getPixels(board))
+        return pixels
+
     #ToDo: Implement function. Should return colour of pieces if there is one and False otherwise
     def hasTrain(self, board):
         segment: BoardSegment
@@ -57,8 +72,7 @@ class Connection():
         for segment in self.segments:
             diff_sum += abs(segment.containsCarriage(board, isGray=self.base_colour=="tab:gray"))
         diff_sum /= len(self.segments)
-        print(f"{self.id} done")
-        return diff_sum
+        return [self.id, diff_sum]
 
     def getDisplayRange(self):
         max_x, max_y = -np.inf, -np.inf

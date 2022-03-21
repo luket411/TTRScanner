@@ -1,11 +1,15 @@
 from sys import path
-from os import path as ospath
+from os import path as ospath, listdir
 path.append(ospath.join(ospath.dirname(__file__), ".."))
 
 import numpy as np
+import cv2
 from csv import reader
+import matplotlib.pyplot as plt
 
 from util.geometry import Point
+from util.get_asset_dirs import get_asset_dirs
+
 
 COLOURS = [
     "r",                #0 - Red
@@ -93,8 +97,9 @@ def read_connections(dirname):
         out = {}
         file_reader = reader(open_file)
         for line in file_reader:
-            out[line[0]] = line[1:]
+            out[int(line[0])] = np.array(line[1:], dtype=np.uint16)
     return out
 
+
 if __name__ == "__main__":
-    validate_segment_dataset('assets/segment_info.csv')
+    pass

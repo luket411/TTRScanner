@@ -30,15 +30,17 @@ class Map():
             self.connections.append(Connection(city1, city2, segments, connection_colour, i))
 
     def plot(self, image=None, show=False, label=False):
-        for connection in self.connections:
-            connection.plot(None, False, label)
-        
         if image is not None:
             plt.imshow(image)
 
+        connection: Connection
+        for connection in self.connections:
+            connection.plot(image=None, show=False, label=label)
+        
+
         if show:
-            plt.show()
-            
+            plt.show()    
+    
 if __name__ == "__main__":
     
     base_img = "assets/0.0 Cropped/11.png"
