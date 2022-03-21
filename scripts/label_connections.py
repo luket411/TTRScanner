@@ -11,11 +11,15 @@ from util.constants import BASE_BACKGROUND_COLOUR
 from train_detection.data_readers import read_connections
 from train_detection.Connection import Connection
 from train_detection.Map import Map
+from scripts.validate_connections import convertor
 
 def main():
     v = 11
     base_file = f"assets/0.0 Cropped/{v}.png"
-    for asset_dir in (get_asset_dirs()[9:]):
+
+    dir_to_run = '4.1'
+
+    for asset_dir in (get_asset_dirs()[convertor[dir_to_run]:]):
         files = [file for file in listdir(asset_dir) if file[-4:] == '.jpg' or file[-4:] == '.png']
         for file_name in files:
             target_file = ospath.join(asset_dir, file_name)
