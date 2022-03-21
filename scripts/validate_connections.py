@@ -30,30 +30,30 @@ convertor = {
     '6.0':16,
     '6.1':17,
     '6.2':18,
-    '6.3':19,
+    '6.3':19
 }
 
+dir_to_run = '6.3'
 
 def validate_connections(map):
     base_file = f"assets/0.0 Cropped/3.png"
 
-    dir_to_run = '3.3'
 
     for asset_dir in get_asset_dirs()[convertor[dir_to_run]:]:
         files = [file for file in listdir(asset_dir) if file[-4:] == '.jpg' or file[-4:] == '.png']
         connection_data = read_connections(asset_dir)
         print(connection_data)
         for file_name in files:
-            full_file_name = ospath.join(asset_dir, file_name)
+            # full_file_name = ospath.join(asset_dir, file_name)
+            full_file_name = f"{asset_dir}/{file_name}"
 
 
             target_file_split = full_file_name.split('/')
             main_num = target_file_split[1][:3]
-            sub_num = target_file_split[2][0]
+            sub_num = target_file_split[2].split('.')[0]
             plt.title(f"{main_num}/{sub_num}")
 
-            file_idx = int(file_name[0])
-
+            file_idx = int(file_name.split('.')[0])
             board, _ = find_board(base_file, full_file_name)
             plt.imshow(board)
 
