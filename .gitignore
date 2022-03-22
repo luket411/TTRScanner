@@ -7,3 +7,4 @@ board_edge_detection/Used
 .venv
 *.pdn
 assets/pickled
+plots
