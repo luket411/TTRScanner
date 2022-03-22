@@ -4,10 +4,12 @@ path.append(ospath.join(ospath.dirname(__file__), ".."))
 
 import numpy as np
 import matplotlib.pyplot as plt
+from concurrent import futures
 
 from train_detection.Connection import Connection
 from train_detection.BoardSegment import BoardSegment
 from train_detection.data_readers import read_base_colours_file, read_layout_csv, read_segment_file
+from util.timer import timer
 
 class Map():
     def __init__(self, layout_info='assets/0.0 Cropped/trains11.csv', segment_info = 'assets/segment_info.csv', layout_colours='assets/0.0 Cropped/avg_colours11.csv'):
@@ -40,6 +42,22 @@ class Map():
 
         if show:
             plt.show()    
+    
+    @timer
+    def process_multicore(self, board):
+        results = []
+        with futures.ProcessPoolExecutor() as executor:
+            processes = [executor.submit(connection.hasTrain, board) for connection in self.connections]
+            for process in processes:
+                results.append(process.result())
+        return results
+
+    @timer
+    def process_singlecore(self, board):
+        results = []
+        for connection in self.connections:
+            results.append(connection.hasTrain(board))
+        return results
     
 if __name__ == "__main__":
     
