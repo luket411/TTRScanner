@@ -37,8 +37,7 @@ def main(target_file):
     sub_num = target_file_split[2][0]
 
 
-    # results = map.process_multicore(board)
-    results=res
+    results = map.process_multicore(board)
     plot_seperate_results(results, map, answers, target_file)
 
 
