@@ -9,9 +9,9 @@ class ImageFileDataset():
         
         if not ospath.exists(image_dir):
             raise Exception(f"image_dir: {image_dir} is empty")
-        self.images = listdir(self.image_dir)
+        self.images = [f"{self.image_dir}/{file}" for file in listdir(self.image_dir) if file[-4:] == '.jpg' or file[-4:] == '.png']
         
-        self.index = 0
+        self.index = -1
         self.size = len(self.images)
         
     def __iter__(self):
