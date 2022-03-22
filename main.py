@@ -31,11 +31,6 @@ def main(target_file):
     target_file_split = target_file.split('/')
     main_num = target_file_split[1][:3]
     sub_num = target_file_split[2][0]
-    plt.title(f"{main_num}/{sub_num}")
-    map.plot(show=True, image=board, label=True)
-
-    # map.plot(show=True, image=blank_background)
-    # map.plot(show=True, image=board)
 
     # results = run_multicore(map, board)
 
@@ -43,6 +38,10 @@ def main(target_file):
 
     # connection: Connection = map.connections[0]
     # connection.hasTrain(board)
+
+    results = map.process_multicore(board)
+    plot_seperate_results(results, map, answers)
+
 
 
 def plot_all_results(results, map, answers):
@@ -63,7 +62,7 @@ def plot_all_results(results, map, answers):
 def plot_seperate_results(results, map, answers):
     sorted_results = sorted(results, key=lambda x:x[1])
 
-    fig, subplots = plt.subplots(10, figsize=(12, 6))
+    fig, subplots = plt.subplots(9, figsize=(12, 6))
     for pos, [idx, result] in enumerate(sorted_results):
         colour = map.connections[int(idx)].base_colour
         params = dict(
@@ -75,12 +74,10 @@ def plot_seperate_results(results, map, answers):
         
         colour_index = COLOURS.index(colour)
 
-        # subplots[(colour_index//5)-1, (colour_index%5)-1].scatter([pos], [result], **params)
         subplots[colour_index].scatter([pos], [result], **params)
 
     plt.show()
-        
+
 if __name__ == "__main__":
-    map, board = main("assets/4.3 Green-White,Red,Pink/3.jpg")
-    
-    results = map.process_multicore(board)
+    main("assets/4.3 Green-White,Red,Pink/3.jpg")
+
