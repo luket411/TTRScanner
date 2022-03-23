@@ -44,6 +44,14 @@ class Map():
             plt.show()    
     
     @timer
+    def process_multicore_results(self, board):
+        results = []
+        with futures.ProcessPoolExecutor() as executor:
+            processes = [executor.submit(connection.hasTrainResults, board) for connection in self.connections]
+            for process in processes:
+                results.append(process.result())
+        return results
+
     def process_multicore(self, board):
         results = []
         with futures.ProcessPoolExecutor() as executor:

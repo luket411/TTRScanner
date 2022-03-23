@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from sys import path
 from os import path as ospath
 path.append(ospath.join(ospath.dirname(__file__), ".."))
@@ -18,3 +19,11 @@ def timer(func):
         return val
 
     return  wrapper
+
+
+@contextmanager
+def timer_context():
+    start = time()
+    yield
+    end = time()
+    print(f"Time taken for code snippet: {end-start}s")

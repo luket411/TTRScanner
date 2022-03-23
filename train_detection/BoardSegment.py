@@ -9,8 +9,21 @@ from math import ceil
 import cv2
 
 from util.timer import timer
-from util.geometry import Quadrilateral, Point
+from util.geometry import Quadrilateral, Point, isBetween
 from util.constants import BASE_BACKGROUND_COLOUR
+from util.Counter import Counter
+
+colour_ranges = {
+    "Black",
+    "White",
+    "Yellow",
+    "Orange",
+    "Green",
+    "Blue",
+    "Gray",
+    "Pink",
+    "Red"
+}
 
 class BoardSegment(Quadrilateral):
     def __init__(self, base_colour, p1, p2, p3, p4, id, is_tunnel=False):
@@ -32,29 +45,71 @@ class BoardSegment(Quadrilateral):
         self.width_int = self.max_x_int - self.min_x_int
 
     # Return num between 0 and 1 that the carriage has changed
-    def containsCarriage(self, board, isGray=False):
-        avg_col = self.getMedianColour(board)
-        base_col = self.base_colour
-
-        # if isGray:
-        #     return np.linalg.norm(avg_col - base_col)
-
-
-        conversion_image = np.array([[avg_col, base_col]], dtype=np.float32)
-
-        hsv_image = cv2.cvtColor(conversion_image, cv2.COLOR_RGB2HSV)[0]
-
-        avg_hsv = hsv_image[0][0] % 180
-        base_hsv = hsv_image[1][0] % 180
-
-        diff = abs(avg_hsv - base_hsv)
-
-
-        if diff > 90:
-            diff = diff - 90
-
-        return diff
-
+    def containsCarriage(self, board):
+        pixels_in_carriage = self.getPixels(board)#[1540:1580]
+        pixels_in_carriage = np.array([pixels_in_carriage], dtype=np.uint8)
+        hsv_pixels_in_carriage = cv2.cvtColor(pixels_in_carriage, cv2.COLOR_RGB2HSV).squeeze(0)
+        
+        hues = hsv_pixels_in_carriage[:,0]
+        sats = hsv_pixels_in_carriage[:,1]
+        vals = hsv_pixels_in_carriage[:2]
+        
+        # print(f"hues, min:{hues.min()}, max:{hues.max()}, median:{np.median(hues)}, average:{np.average(hues)}")
+        # print(f"sats, min:{sats.min()}, max:{sats.max()}, median:{np.median(sats)}, average:{np.average(sats)}")
+        # print(f"vals, min:{vals.min()}, max:{vals.max()}, median:{np.median(vals)}, average:{np.average(vals)}")
+        
+        pixel_display = np.full(hsv_pixels_in_carriage.shape, BASE_BACKGROUND_COLOUR)
+        counter = Counter()
+        
+        for pixel_idx, [h, s, v] in enumerate(hsv_pixels_in_carriage):
+            if v < 55:
+                counter.addVote("Black")
+                pixel_display[pixel_idx] = [0,0,0]
+                
+            elif isBetween(0, 15, s) and isBetween(233, 255, v):
+                counter.addVote("White")
+                pixel_display[pixel_idx] = [255,255,255]
+                
+            elif isBetween(0, 51, s):# and isBetween(40, 90, v):
+                counter.addVote("Gray")
+                pixel_display[pixel_idx] = [65,65,70]
+                
+            elif isBetween(20, 30, h):
+                counter.addVote("Yellow")
+                pixel_display[pixel_idx] = [255,255,0]
+                
+            elif isBetween(30, 60, h):
+                counter.addVote("Green")
+                pixel_display[pixel_idx] = [0,255,0]
+                
+            elif isBetween(80, 130, h):
+                counter.addVote("Blue")
+                pixel_display[pixel_idx] = [0,0,255]
+                
+            elif h < 8 or h > 175:
+                counter.addVote("Red")
+                pixel_display[pixel_idx] = [255,0,0]
+                
+            elif isBetween(8, 20, h):
+                counter.addVote("Orange")
+                pixel_display[pixel_idx] = [255,135,0]
+                
+            elif isBetween(130, 175, h):
+                counter.addVote("Pink")
+                pixel_display[pixel_idx] = [255,50,240]
+        
+        # print(f"Carriage: {self.id}, Winner: {counter.getWinner()}, ({round(counter.getWinningPercentage(len(hsv_pixels_in_carriage))*100)}%)")
+        # print(f"Votes Cast: {counter.getTotalVotes()}")
+        # counter.printBreakdown(len(hsv_pixels_in_carriage))
+        
+        
+        # pixel_display_tall = np.full((200, *hsv_pixels_in_carriage.shape), pixel_display)
+        # pixel_value_tall = np.full((200, *hsv_pixels_in_carriage.shape), pixels_in_carriage)
+        # display = np.vstack((pixel_display_tall, pixel_value_tall))
+        # plt.imshow(display)
+        # plt.show()
+        
+        return counter
 
     # Deprecated
     @timer

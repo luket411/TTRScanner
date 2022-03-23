@@ -5,9 +5,12 @@ path.append(ospath.join(ospath.dirname(__file__), ".."))
 import numpy as np
 import csv
 import matplotlib.pyplot as plt
-import math
 
 from train_detection.BoardSegment import BoardSegment
+from util.Counter import Counter
+from util.constants import COLOURS
+
+valid_train_colours = ["Black", "Red", "Yellow", "Green", "Blue"]
 
 class Connection():
     def __init__(self, start, dest, segments, base_colour, id):
@@ -24,7 +27,7 @@ class Connection():
     def __repr__(self):
         return f"({self.base_colour}):{self.start}->{self.dest}:{self.segments}"
 
-    def plot(self, image=None, show=False, label=False, image_focus=None, fill=False, use_avg_colour=False):
+    def plot(self, image=None, show=False, label=False, image_focus=False, fill=False, use_avg_colour=False):
         if image is not None:
             plt.imshow(image)    
             if image_focus:
@@ -65,14 +68,25 @@ class Connection():
             pixels.append(segment.getPixels(board))
         return pixels
 
-    #ToDo: Implement function. Should return colour of pieces if there is one and False otherwise
-    def hasTrain(self, board):
+    def hasTrainResults(self, board):
         segment: BoardSegment
-        diff_sum = 0
+        
+        connection_counter = Counter()
         for segment in self.segments:
-            diff_sum += abs(segment.containsCarriage(board, isGray=self.base_colour=="tab:gray"))
-        diff_sum /= len(self.segments)
-        return [self.id, diff_sum]
+            segment_counter = segment.containsCarriage(board)
+            connection_counter.addVote(segment_counter.getWinner(), segment_counter.getWinningPercentage())
+            # print(f"Carriage: {segment.id}, Colour: {self.base_colour}, Winner: {segment_counter.getWinner()}, ({round(segment_counter.getWinningPercentage()*100)}%)")
+        
+        # print(f"Connection: {str(self)}({self.id}), Base Colour: {self.base_colour}, Predicted Colour: {connection_counter.getWinner()}, Confidence: {round(connection_counter.getWinningPercentage(self.size)*100)}%")
+        print(f"Connection {str(self)} Completed")
+        return [self.id, connection_counter]
+
+    def hasTrain(self, board):
+        result_counter = self.hasTrainResults(board)[1]
+        predicted_colour = result_counter.getWinner()
+        hasChanged = predicted_colour != COLOURS[self.base_colour]
+        isTrainColour = predicted_colour in valid_train_colours        
+        return [self.id, hasChanged and isTrainColour, predicted_colour]
 
     def getDisplayRange(self):
         max_x, max_y = -np.inf, -np.inf
