@@ -57,6 +57,8 @@ def main(target_file, train_colour=None):
 
     # handle_connection_results(map, board, answers, train_colour)
     asses_board(map, board, answers)
+    plt.imshow(board)
+    plt.show()
 
 def asses_board(map, board, answers):
     results = map.process_multicore(board)
@@ -103,12 +105,10 @@ def handle_connection_results(map, board, answers, train_colour):
 
 if __name__ == "__main__":
     dataset = ImageFileDataset(6.1)
-    main(dataset.getImageFileByKey(11), dataset.colour)
-    
+    # main(dataset.getImageFileByKey(11), dataset.colour)
+
     # blank = ImageFileDataset(1.0)
     # main(blank.getAsset())
-    # for asset_dir in get_asset_dirs():
-    #     dataset = ImageFileDataset(asset_dir)
-    #     for asset in dataset:
-    #         with timer_context():
-    #             main(asset)
+
+    for asset in dataset:
+        main(asset)
