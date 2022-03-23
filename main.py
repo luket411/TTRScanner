@@ -18,9 +18,7 @@ from datasets.dataset import ImageFileDataset
 
 np.set_printoptions(suppress=True)
 
-def main(target_file, train_colour=None):
-    print(target_file)
-    
+def main(target_file, train_colour=None):    
     v = 3
     base_file = f"assets/0.0 Cropped/{v}.png"
     train_location_data = f"assets/0.0 Cropped/trains{v}.csv"
@@ -59,7 +57,7 @@ def main(target_file, train_colour=None):
     asses_board(map, board, answers)
 
 def asses_board(map: Map, board, answers):
-    plt.imshow(board)
+    # plt.imshow(board)
     results = map.process_multicore(board)
     incorrect = []
     correct = []
@@ -70,17 +68,17 @@ def asses_board(map: Map, board, answers):
         else:
                 incorrect.append(connection)
 
-        if hasTrain:
-            connection.plot(use_colour=np.array([0,255,0], dtype=np.float32))
-            print(f"Connection: {str(connection)} has a Train of colour: {col}")
+        # if hasTrain:
+            # connection.plot(use_colour=np.array([0,255,0], dtype=np.float32))
+            # print(f"Connection: {str(connection)} has a Train of colour: {col}")
     
     for incorrect_connection in incorrect:
-        incorrect_connection.plot(use_colour=np.array([255,0,0], dtype=np.float32))
-        print(f"Connection: {incorrect_connection} was mislabelled")
+        # incorrect_connection.plot(use_colour=np.array([255,0,0], dtype=np.float32))
+        print(f"Connection: {incorrect_connection}({incorrect_connection.id}) was mislabelled")
     
     print(f"Connections marked correctly: {len(correct)}")
     print(f"Connections marked incorrectly: {len(incorrect)}")
-    plt.show()
+    # plt.show()
 
 def handle_connection_results(map, board, answers, train_colour):
     results = map.process_multicore_results(board)
@@ -104,11 +102,20 @@ def handle_connection_results(map, board, answers, train_colour):
 
 
 if __name__ == "__main__":
-    dataset = ImageFileDataset(6.1)
     # main(dataset.getImageFileByKey(11), dataset.colour)
 
     # blank = ImageFileDataset(1.0)
     # main(blank.getAsset())
 
-    for asset in dataset:
-        main(asset)
+    for main_label in range(1,7):
+        for sub_label in range(0,4):
+            index = float(f"{main_label}.{sub_label}")
+            dataset = ImageFileDataset(index)
+
+            for asset in dataset:
+                print(f"Input Image: {asset}")
+                main(asset)
+                print("========================")
+            
+            if index == 1.0:
+                break
