@@ -27,7 +27,7 @@ class Connection():
     def __repr__(self):
         return f"({self.base_colour}):{self.start}->{self.dest}:{self.segments}"
 
-    def plot(self, image=None, show=False, label=False, image_focus=False, fill=False, use_avg_colour=False):
+    def plot(self, image=None, show=False, label=False, image_focus=False, fill=False, use_avg_colour=False, use_colour=None):
         if image is not None:
             plt.imshow(image)    
             if image_focus:
@@ -41,6 +41,8 @@ class Connection():
 
             if use_avg_colour:
                 colour_val = segment.getAverageColour(image) 
+            elif use_colour is not None:
+                colour_val = use_colour
 
             params = dict(fill=fill, colour=colour_val)
 

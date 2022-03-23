@@ -57,33 +57,30 @@ def main(target_file, train_colour=None):
 
     # handle_connection_results(map, board, answers, train_colour)
     asses_board(map, board, answers)
-    plt.imshow(board)
-    plt.show()
 
-def asses_board(map, board, answers):
+def asses_board(map: Map, board, answers):
+    plt.imshow(board)
     results = map.process_multicore(board)
     incorrect = []
     correct = []
     for [idx, hasTrain, col] in results:
         connection = map.connections[idx]
-        isCorrect = False
-        if hasTrain and idx in answers:
+        if (hasTrain and idx in answers) or (idx not in answers and not hasTrain):
                 correct.append(connection)
-                isCorrect = True
-        elif idx not in answers and not hasTrain:
-                correct.append(connection)
-                isCorrect = True
         else:
                 incorrect.append(connection)
-    
+
         if hasTrain:
+            connection.plot(use_colour=np.array([0,255,0], dtype=np.float32))
             print(f"Connection: {str(connection)} has a Train of colour: {col}")
     
     for incorrect_connection in incorrect:
+        incorrect_connection.plot(use_colour=np.array([255,0,0], dtype=np.float32))
         print(f"Connection: {incorrect_connection} was mislabelled")
     
     print(f"Connections marked correctly: {len(correct)}")
     print(f"Connections marked incorrectly: {len(incorrect)}")
+    plt.show()
 
 def handle_connection_results(map, board, answers, train_colour):
     results = map.process_multicore_results(board)
