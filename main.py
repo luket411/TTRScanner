@@ -78,7 +78,10 @@ def asses_board(map, board, answers):
     
         if hasTrain:
             print(f"Connection: {str(connection)} has a Train of colour: {col}")
-        
+    
+    for incorrect_connection in incorrect:
+        print(f"Connection: {incorrect_connection} was mislabelled")
+    
     print(f"Connections marked correctly: {len(correct)}")
     print(f"Connections marked incorrectly: {len(incorrect)}")
 
