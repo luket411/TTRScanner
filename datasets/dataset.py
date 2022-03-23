@@ -6,6 +6,7 @@ import cv2
 
 convertor = {
     1.0:"assets/1.0 Blank",
+    1.1:"assets/1.1 Full Examples",
     2.0:"assets/2.0 Red-Red",
     2.1:"assets/2.1 Red-Yellow,Green,Gray",
     2.2:"assets/2.2 Red-Blue,Black,Orange",

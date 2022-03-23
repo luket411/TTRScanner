@@ -80,7 +80,7 @@ class Connection():
             # print(f"Carriage: {segment.id}, Colour: {self.base_colour}, Winner: {segment_counter.getWinner()}, ({round(segment_counter.getWinningPercentage()*100)}%)")
         
         # print(f"Connection: {str(self)}({self.id}), Base Colour: {self.base_colour}, Predicted Colour: {connection_counter.getWinner()}, Confidence: {round(connection_counter.getWinningPercentage(self.size)*100)}%")
-        # print(f"Connection {str(self)} Completed")
+        print(f"Connection {str(self)} Completed")
         return [self.id, connection_counter]
 
     def hasTrain(self, board):

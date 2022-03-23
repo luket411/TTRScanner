@@ -14,3 +14,15 @@ COLOURS = {
     "y":"Yellow",               #7 - Yellow
     "w":"White"                 #8 - White
 }
+
+INVERSE_COLOURS = {
+    "Red":[255,0,0],
+    "Yellow":[255,255,0],
+    "Blue":[0,0,255],
+    "Orange":[255,135,0],
+    "Green":[0,255,0],
+    "White":[255,255,255],
+    "Gray":[65,65,70],
+    "Black":[0,0,0],
+    "Pink":[255,50,240]
+}
