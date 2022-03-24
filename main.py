@@ -12,11 +12,14 @@ from train_detection.data_readers import read_connections, COLOURS
 
 from util.timer import timer, timer_context
 from util.constants import BASE_BACKGROUND_COLOUR, COLOURS, INVERSE_COLOURS
+from util.Counter import Counter
 
 from datasets.dataset import ImageFileDataset
 
 np.set_printoptions(suppress=True)
 
+# Used to assess full boards.
+# Displays a board with each connection highlighted by the colour it thinks is there
 def run_no_answers(target_file):
     v = 3
     base_file = f"assets/0.0 Cropped/{v}.png"
@@ -37,7 +40,7 @@ def run_no_answers(target_file):
 
 
 
-def main(target_file, train_colour=None):
+def main(target_file, train_colour=None, show=True):
     print(target_file)    
     v = 3
     base_file = f"assets/0.0 Cropped/{v}.png"
@@ -53,72 +56,90 @@ def main(target_file, train_colour=None):
     answer_index = "/".join(target_file.split("/")[:-1])
     answers = read_connections(answer_index)[target]
 
-    # hsv_board = cv2.cvtColor(board, cv2.COLOR_RGB2HSV)
-    # hues = hsv_board[:,:,0]
-    # sats = hsv_board[:,:,1]
-    # vals = hsv_board[:,:,2]
-    # print(f"hues, min:{hues.min()}, max:{hues.max()}, median:{np.median(hues)}, average:{np.average(hues)}")
-    # print(f"sats, min:{sats.min()}, max:{sats.max()}, median:{np.median(sats)}, average:{np.average(sats)}")
-    # print(f"vals, min:{vals.min()}, max:{vals.max()}, median:{np.median(vals)}, average:{np.average(vals)}")
-    # return
-
     # segment: BoardSegment
-    # segment = map.connections[37].segments[0]
+    # segment = map.connections[0].segments[0]
+    # print(segment.containsCarriage(board).getWinner())
     # segment.plot(image=board, show=True)
-    # segment.containsCarriage(board)
 
     # connection: Connection = map.connections[12]
     # print(connection.hasTrain(board))
     # connection.plot(image=board, show=True, image_focus=True)
 
-    # handle_connection_results(map, board, answers, train_colour)
-    asses_board(map, board, answers)
+    asses_board(map, board, answers, show)
+    # guess_colours(map, board)
 
-def asses_board(map: Map, board, answers):
+# Uses the provided answers to mark into different categories of how the program performed
+def asses_board(map: Map, board, answers, show=True):
     plt.imshow(board)
     results = map.process_multicore(board)
-    incorrect = []
-    correct = []
-    for [idx, hasTrain, col] in results:
-        connection = map.connections[idx]
-        if (hasTrain and idx in answers) or (idx not in answers and not hasTrain):
-            correct.append(connection)
-            if hasTrain:
-                connection.plot(use_colour=np.array([0,255,0], dtype=np.float32))
-        else:
-            incorrect.append(connection)
-
-        if hasTrain:
-            print(f"Connection: {str(connection)} has a Train of colour: {col}")
-
-    for incorrect_connection in incorrect:
-        incorrect_connection.plot(use_colour=np.array([255,0,0], dtype=np.float32))
-        print(f"Connection: {incorrect_connection}({incorrect_connection.id}) was mislabelled")
     
-    print(f"Connections marked correctly: {len(correct)}")
-    print(f"Connections marked incorrectly: {len(incorrect)}")
+    correct = []
+    shouldnt_be_labelled = []
+    labelled_incorrectly = []
+    missed = []
+    
+    correct_colour = np.array([0,255,0], dtype=np.float32)
+    labelled_incorrectly_colour = np.array([255,0,0], dtype=np.float32)
+    shouldnt_be_labelled_colour = np.array([255,215,0], dtype=np.float32)
+    missed_colour = np.array([0,0,255], dtype=np.float32)
+    
+    for [idx, islabelled, col] in results:
+        connection = map.connections[idx]
+
+        hasTrain = idx in answers.keys()
+        right_colour = None if not hasTrain else answers[idx]
+        labelled_right_colour = islabelled and right_colour == col
+        labelled_wrong_colour = islabelled and not (right_colour == col)
+        
+        if hasTrain and labelled_right_colour:
+            correct.append(connection)
+            connection.plot(use_colour=correct_colour)
+        elif not hasTrain and not islabelled:
+            correct.append(connection)
+        elif hasTrain and labelled_wrong_colour:
+            labelled_incorrectly.append(connection)
+        elif not hasTrain and islabelled:
+            shouldnt_be_labelled.append(connection)
+        elif hasTrain and not islabelled:
+            missed.append(connection)
+
+    for connection in labelled_incorrectly:
+        connection.plot(use_colour=labelled_incorrectly_colour)
+        
+    for connection in shouldnt_be_labelled:
+        connection.plot(use_colour=shouldnt_be_labelled_colour)
+    
+    for connection in missed:
+        connection.plot(use_colour=missed_colour)
+    
+    print(f"Connections labelled correctly (Green or no highlight): {len(correct)}")
+    print(f"Connections labelled with wrong colour (Red): {len(labelled_incorrectly)}")
+    print(f"Connections labelled when no train exists (Yellow): {len(shouldnt_be_labelled)}")
+    print(f"Connections not labelled when train exits (Blue): {len(missed)}")
+    if show:
+        plt.show()
+
+# Displays a map with the current boards estimate for each connection.
+def guess_colours(map: Map, board):
+    plt.imshow(board)
+    results = map.process_multicore_results(board)
+    correct = Counter()
+    incorrect = Counter()
+    for [idx, counter] in results:
+        connection = map.connections[idx]
+        if counter.getWinner() == COLOURS[connection.base_colour]:
+            correct.addVote(COLOURS[connection.base_colour])
+        else:
+            incorrect.addVote(COLOURS[connection.base_colour])
+        col = np.array(INVERSE_COLOURS[counter.getWinner()], dtype=np.float32)
+        connection.plot(use_colour=col)
+            
+    correct.printBreakdown()
+    
+    incorrect.printBreakdown()
     plt.show()
 
-def handle_connection_results(map, board, answers, train_colour):
-    results = map.process_multicore_results(board)
-    incorrects = []
-    
-    successes, total = 0, 0
-    for [connection_idx, connection_result] in results:
-        connection = map.connections[connection_idx]
-        connection_colour = COLOURS[connection.base_colour] if connection_idx not in answers else train_colour
-        if connection_result.getWinner() == connection_colour:
-            successes += 1
-        else:
-            incorrects.append([connection, connection_result])
-        total += 1
-        # print(f"Connection: {str(connection)}({connection.id}), Base Colour: {COLOURS[connection.base_colour]}, Predicted Colour: {connection_result.getWinner()}, Confidence: {round(connection_result.getWinningPercentage(connection.size)*100)}%")
-
-    print(f"{successes}/{total}")
-    
-    for [connection, result] in incorrects:
-        print(f"Connection: {str(connection)}({connection.id}), Base Colour: {COLOURS[connection.base_colour]}, Predicted Colour: {result.getWinner()}, Confidence: {round(result.getWinningPercentage(connection.size)*100)}%")
-
+# Runs main on all assets
 def run_all():
     for main_label in range(1,7):
         for sub_label in range(0,4):
@@ -133,8 +154,18 @@ def run_all():
             if index == 1.0:
                 break
 
+def test_blank_board(all=False):
+    dataset = ImageFileDataset(1.0)
+    for asset in dataset:
+        main(asset, show=False)
+        if not all:
+            break
+
 if __name__ == "__main__":
 
-    dataset = ImageFileDataset(4.2)
+    # test_blank_board(all=True)
+
+    dataset = ImageFileDataset(1.0)
+    main(dataset.getImageFileByKey(2))
     # run_no_answers(dataset.getAsset())
-    main(dataset.getAsset())
+    # main(dataset.getAsset())

@@ -26,7 +26,8 @@ class Map():
             segments = []
             for segment_index in connection_info[1]:
                 coordinates = train_layouts[segment_index-1][1]
-                base_colour = base_colours[segment_index-1]
+                # base_colour = base_colours[segment_index-1]
+                base_colour = connection_colour
                 segments.append(BoardSegment(base_colour, *coordinates, segment_index))
             
             self.connections.append(Connection(city1, city2, segments, connection_colour, i))

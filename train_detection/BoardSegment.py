@@ -10,7 +10,7 @@ import cv2
 
 from util.timer import timer
 from util.geometry import Quadrilateral, Point, isBetween
-from util.constants import BASE_BACKGROUND_COLOUR
+from util.constants import BASE_BACKGROUND_COLOUR, COLOURS
 from util.Counter import Counter
 
 colour_ranges = {
@@ -30,7 +30,7 @@ class BoardSegment(Quadrilateral):
         super().__init__(p1, p2, p3, p4)
         self.id = id
 
-        self.base_colour = base_colour
+        self.base_colour = COLOURS[base_colour] # matlab format
         self.is_tunnel = is_tunnel
         
         self.min_x_int = round(self.min_x)
@@ -62,41 +62,42 @@ class BoardSegment(Quadrilateral):
         counter = Counter()
         
         for pixel_idx, [h, s, v] in enumerate(hsv_pixels_in_carriage):
-            if v < 55:
-                counter.addVote("Black")
-                pixel_display[pixel_idx] = [0,0,0]
                 
-            elif isBetween(0, 15, s) and isBetween(233, 255, v):
+            if isBetween(0, 60, s) and self.base_colour == "White":
                 counter.addVote("White")
                 pixel_display[pixel_idx] = [255,255,255]
                 
-            elif isBetween(0, 51, s):# and isBetween(40, 90, v):
+            elif isBetween(0, 60, s) and self.base_colour == "Gray":
                 counter.addVote("Gray")
                 pixel_display[pixel_idx] = [65,65,70]
+                
+            elif isBetween(8, 20, h) and self.base_colour == "Orange":
+                counter.addVote("Orange")
+                pixel_display[pixel_idx] = [255,135,0]
+                
+            elif isBetween(130, 175, h) and self.base_colour == "Pink":
+                counter.addVote("Pink")
+                pixel_display[pixel_idx] = [255,50,240]
+
+            elif v < 50:
+                counter.addVote("Black")
+                pixel_display[pixel_idx] = [0,0,0]
                 
             elif isBetween(20, 30, h):
                 counter.addVote("Yellow")
                 pixel_display[pixel_idx] = [255,255,0]
                 
-            elif isBetween(30, 60, h):
+            elif isBetween(30, 90, h):
                 counter.addVote("Green")
                 pixel_display[pixel_idx] = [0,255,0]
                 
-            elif isBetween(80, 130, h):
+            elif isBetween(100, 130, h):
                 counter.addVote("Blue")
                 pixel_display[pixel_idx] = [0,0,255]
-                
+            
             elif h < 8 or h > 175:
                 counter.addVote("Red")
                 pixel_display[pixel_idx] = [255,0,0]
-                
-            elif isBetween(8, 20, h):
-                counter.addVote("Orange")
-                pixel_display[pixel_idx] = [255,135,0]
-                
-            elif isBetween(130, 175, h):
-                counter.addVote("Pink")
-                pixel_display[pixel_idx] = [255,50,240]
         
         # print(f"Carriage: {self.id}, Winner: {counter.getWinner()}, ({round(counter.getWinningPercentage(len(hsv_pixels_in_carriage))*100)}%)")
         # print(f"Votes Cast: {counter.getTotalVotes()}")

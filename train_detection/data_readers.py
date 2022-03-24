@@ -97,9 +97,17 @@ def read_connections(dirname):
         out = {}
         file_reader = reader(open_file)
         for line in file_reader:
-            out[int(line[0])] = np.array(line[1:], dtype=np.uint16)
+            file = int(line[0])
+            connections = line[1:]
+            connections_with_carriages = {}
+            for connection_info in connections:
+                connection_info = connection_info.split("/")
+                connection_index = int(connection_info[0])
+                colour = connection_info[1]
+                connections_with_carriages.update({connection_index: colour})
+            out[file] = connections_with_carriages
     return out
 
 
 if __name__ == "__main__":
-    pass
+    print(read_connections("assets/6.3 Black-White,Red,Pink"))
