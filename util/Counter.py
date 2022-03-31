@@ -43,6 +43,12 @@ class Counter():
             total_votes = self.getTotalVotes()
         for i, col in enumerate(self.colours):
             print(f"{col}: {self.votes[i]}/{total_votes}")
+            
+    def __add__(self, other):
+        total = self.votes + other.votes
+        output_counter = Counter()
+        output_counter.votes = total
+        return output_counter
 
 if __name__ == "__main__":
     c = Counter()
