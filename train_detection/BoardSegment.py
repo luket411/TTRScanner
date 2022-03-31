@@ -78,6 +78,10 @@ class BoardSegment(Quadrilateral):
             elif isBetween(130, 175, h) and self.base_colour == "Pink":
                 counter.addVote("Pink")
                 pixel_display[pixel_idx] = [255,50,240]
+                
+            elif isBetween(30, 90, h):
+                counter.addVote("Green")
+                pixel_display[pixel_idx] = [0,255,0]
 
             elif v < 50:
                 counter.addVote("Black")
@@ -86,10 +90,6 @@ class BoardSegment(Quadrilateral):
             elif isBetween(20, 30, h):
                 counter.addVote("Yellow")
                 pixel_display[pixel_idx] = [255,255,0]
-                
-            elif isBetween(30, 90, h):
-                counter.addVote("Green")
-                pixel_display[pixel_idx] = [0,255,0]
                 
             elif isBetween(100, 130, h):
                 counter.addVote("Blue")
@@ -113,7 +113,6 @@ class BoardSegment(Quadrilateral):
         return counter
 
     # Deprecated
-    @timer
     def getAvgColour(self, image, show=False, snippet_output_file=None):
         avg_col = np.zeros((3), dtype=np.float32)
         area = 0
@@ -166,7 +165,6 @@ class BoardSegment(Quadrilateral):
                     pixels.append(image[y,x])
         return np.uint8(pixels)
     
-    @timer
     def getAverageColour(self, image):
         return np.average(self.getPixels(image), axis=0)
 

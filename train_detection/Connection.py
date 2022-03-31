@@ -75,19 +75,32 @@ class Connection():
         
         connection_counter = Counter()
         for segment in self.segments:
-            segment_counter = segment.containsCarriage(board)
-            connection_counter.addVote(segment_counter.getWinner(), segment_counter.getWinningPercentage())
+            segment_counter: Counter = segment.containsCarriage(board)
+            connection_counter = connection_counter + segment_counter
+            
+            # segment_counter.printBreakdown()
+            # print("\n")
             # print(f"Carriage: {segment.id}, Colour: {self.base_colour}, Winner: {segment_counter.getWinner()}, ({round(segment_counter.getWinningPercentage()*100)}%)")
+        
+        # connection_counter.printBreakdown()
         
         # print(f"Connection: {str(self)}({self.id}), Base Colour: {self.base_colour}, Predicted Colour: {connection_counter.getWinner()}, Confidence: {round(connection_counter.getWinningPercentage(self.size)*100)}%")
         # print(f"Connection {str(self)} Completed")
         return [self.id, connection_counter]
+    
+    def hasTrainDebug(self, board):
+        result_counter: Counter = self.hasTrainResults(board)[1]
+        result_counter.printBreakdown()
+        predicted_colour = result_counter.getWinner()
+        hasChanged = predicted_colour != COLOURS[self.base_colour]
+        isTrainColour = predicted_colour in valid_train_colours      
+        return [self.id, hasChanged and isTrainColour, predicted_colour]
 
     def hasTrain(self, board):
         result_counter = self.hasTrainResults(board)[1]
         predicted_colour = result_counter.getWinner()
         hasChanged = predicted_colour != COLOURS[self.base_colour]
-        isTrainColour = predicted_colour in valid_train_colours        
+        isTrainColour = predicted_colour in valid_train_colours      
         return [self.id, hasChanged and isTrainColour, predicted_colour]
 
     def getDisplayRange(self):

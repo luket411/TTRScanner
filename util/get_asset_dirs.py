@@ -50,4 +50,4 @@ def get_asset_dirs():
     return full_dirs
 
 if __name__ == "__main__":
-    print(get_asset_dirs()[0])
+    print(get_asset_dirs())
