@@ -3,7 +3,7 @@ from os import path as ospath, listdir
 path.append(ospath.join(ospath.dirname(__file__), ".."))
 import numpy as np
 import cv2
-
+from util.get_asset_dirs import dirs, subdirs
 convertor = {
     1.0:"assets/1.0 Blank",
     1.1:"assets/1.1 Full Examples",
@@ -102,6 +102,20 @@ class ImageDataset():
     def __getitem__(self, index):
         return self.images[index]
 
+def index_to_dir(num, subnum, image_index):
+    
+    if num == 1:
+        return f'assets/1.0 Blank/{image_index}.jpg'
+    else:
+        dir_colour = dirs[num-2]
+        if subnum != 0:
+            subdir_split = subdirs[subnum-1].split(",")
+            if dir_colour in subdir_split:
+                subdir_split.remove(dir_colour)
+            subdir = ",".join(subdir_split)
+        else:
+            subdir = dir_colour
+        return f'assets/{num}.{subnum} {dir_colour}-{subdir}/{image_index}.jpg'
 
 if __name__ == "__main__":
     images = ImageFileDataset("assets/1.0 Blank")
