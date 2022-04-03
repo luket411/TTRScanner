@@ -1,0 +1,3 @@
+This run approx at the time of the first full iteration of the program.
+Voting system in place which records best guess of each pixel colour
+Works well for dimly lit boards but cant detect blacks behind specular highlights

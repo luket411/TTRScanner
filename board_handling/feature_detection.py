@@ -1,12 +1,11 @@
 from sys import path
 from os import listdir, path as ospath
-
-path.append(f'{ospath.dirname(__file__)}/..')
+path.append(ospath.join(ospath.dirname(__file__), ".."))
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from board_processing.warp_board import annotate_fixed_city_points
-from get_and_save_corners import getImagesInDir
+from board_handling.warp_board import annotate_fixed_city_points
+from scripts.get_and_save_corners import getImagesInDir
 
 def orb_get_keypoints_descriptors(img, draw=False):   
 
@@ -42,7 +41,7 @@ def draw_matches(possiblyCorrectMatches, source_image, source_keypoints, target_
     plt.imshow(img_matched)
     plt.show()
 
-def main(source_file = "assets\\3.1 Blue-Yellow,Green,Gray\\PXL_20220209_153108922.jpg", target_file = "assets\\0.0 Cropped\\11.png"):
+def main(source_file = "assets/3.1 Blue-Yellow,Green,Gray/PXL_20220209_153108922.jpg", target_file = "assets/0.0 Cropped/11.png"):
     source_img = cv2.imread(source_file, 1)
     source_img = cv2.cvtColor(source_img, cv2.COLOR_BGR2RGB)
     target_img = cv2.imread(target_file, 1)
@@ -72,10 +71,6 @@ def find_homography_between_images(source_img, target_img):
     
     np.random.shuffle(possiblyCorrectMatches)
     
-    print(possiblyCorrectMatches.shape)
-    print(targetpts.shape)
-    print(sourcepts.shape)
-    
     H = cv2.findHomography(sourcepts, targetpts, cv2.RANSAC, 20.0)[0]
     
     # draw_matches(possiblyCorrectMatches, source_img, source_keypoints, target_img, target_keypoints)
@@ -84,28 +79,35 @@ def find_homography_between_images(source_img, target_img):
     #     xy = H @ np.array([[sourcepts[i,0]], [sourcepts[i,1]], [1]])
     #     x = xy[0]/xy[2]
     #     y = xy[1]/xy[2]
-    #     print(f"\n{x[0]},{y[0]}")
-    #     print(targetpts[i])
     
     return H
     
+def find_board(target_file, source_file):
+    source_img = cv2.imread(source_file, 1)
+    if source_img is None:
+        raise Exception(f"'{source_file}' could not opened")
+    
+    target_img = cv2.imread(target_file, 1)
+    if target_img is None:
+        raise Exception(f"'{target_file}' could not opened")
 
+    source_img = cv2.cvtColor(source_img, cv2.COLOR_BGR2RGB)
+    target_img = cv2.cvtColor(target_img, cv2.COLOR_BGR2RGB)
+
+    H = find_homography_between_images(source_img, target_img)
+        
+    warped = cv2.warpPerspective(source_img, H, (target_img.shape[1], target_img.shape[0]))
+    return warped, target_img
 
 if __name__ == "__main__":
-    target_file="assets\\0.0 Cropped\\11.png"
-        # source_file="assets\\2.0 Red-Red\\PXL_20220209_150018426.jpg"
-    for source_file in getImagesInDir("assets\\2.0 Red-Red"):
-        H = main(
-            target_file=target_file,
-            source_file=source_file
-        )
-        source_img = cv2.imread(source_file, 1)
-        source_img = cv2.cvtColor(source_img, cv2.COLOR_BGR2RGB)
-        target_img = cv2.imread(target_file, 1)
-        target_img = cv2.cvtColor(target_img, cv2.COLOR_BGR2RGB)
-            
-        warped = cv2.warpPerspective(source_img, H, (target_img.shape[1], target_img.shape[0]))
-        annotated = annotate_fixed_city_points(np.copy(warped), "assets\\0.0 Cropped\\cities11.csv")
-        plt.imshow(annotated)
-        plt.show()
+    target_file="assets/0.0 Cropped/11.png"
+    source_file="assets/2.0 Red-Red/PXL_20220209_150018426.jpg"
+    # for source_file in getImagesInDir("assets/2.0 Red-Red"):
+        
+    board = find_board(target_file, source_file)
+    
+    # annotated = annotate_fixed_city_points(np.copy(board), "assets/0.0 Cropped/cities11.csv")
+    # plt.imshow(annotated)
+    plt.imshow(board)
+    plt.show()
     
