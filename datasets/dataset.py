@@ -38,6 +38,21 @@ colours = {
     6:"Black"
 }
 
+inv_cols = {col: idx for idx, col in colours.items()}
+
+col_to_subnum = {
+    "yellow":1,
+    "green":1,
+    "gray":1,
+    "blue":2,
+    "black":2,
+    "orange":2,
+    "white":3,
+    "red":3,
+    "pink":3
+
+}
+
 
 class ImageFileDataset():
     def __init__(self, dir_id, corners=None):
@@ -75,33 +90,6 @@ class ImageFileDataset():
     def __getitem__(self, index):
         return self.images[index]
 
-class ImageDataset():
-    def __init__(self, image_dir):
-        self.image_dir = image_dir
-        if not ospath.exists(image_dir):
-            raise Exception(f"image_dir: {image_dir} is empty")
-        self.images_files = listdir(self.image_dir)
-        
-        self.images = np.empty((len(self.images_files)))
-        
-        for image_file in self.images_files:
-            self.images(cv2.imread(image_file, ))
-        
-        self.index = 0
-        self.size = len(self.images)
-        
-    def __iter__(self):
-        return self
-    
-    def __next__(self):
-         self.index += 1
-         if self.index < self.size:
-             return self.images[self.index]
-         raise StopIteration
-
-    def __getitem__(self, index):
-        return self.images[index]
-
 def index_to_dir(num, subnum, image_index):
     
     if num == 1:
@@ -117,7 +105,25 @@ def index_to_dir(num, subnum, image_index):
             subdir = dir_colour
         return f'assets/{num}.{subnum} {dir_colour}-{subdir}/{image_index}.jpg'
 
+def get_all_of_tile_colour(col: str):
+    retVals = []
+    col = col.lower()
+    col_idx = col_to_subnum[col]
+    for key in convertor.keys():
+        if (key*10)%10 == col_idx:
+            for asset in ImageFileDataset(key):
+                retVals.append(asset)
+    return retVals
+
+def get_all_of_piece_colour(col: str):
+    col = col.capitalize()
+    col_idx = inv_cols[col]
+    retVals = []
+    for key in convertor.keys():
+        if key//1 == col_idx:
+            for asset in ImageFileDataset(key):
+                retVals.append(asset)
+    return retVals
+
 if __name__ == "__main__":
-    images = ImageFileDataset("assets/1.0 Blank")
-    for i in images:
-        print(i)
+    print(get_all_of_piece_colour("Black"))

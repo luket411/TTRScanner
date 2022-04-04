@@ -14,7 +14,7 @@ from util.timer import timer
 from util.constants import BASE_BACKGROUND_COLOUR, COLOURS, INVERSE_COLOURS
 from util.Counter import Counter
 
-from datasets.dataset import ImageFileDataset, index_to_dir
+from datasets.dataset import ImageFileDataset, index_to_dir, get_all_of_piece_colour, get_all_of_tile_colour
 
 np.set_printoptions(suppress=True)
 
@@ -198,21 +198,45 @@ def print_results(result_set, csv_file):
     return output_String
         
 
-def test_blank_board(all=False):
+def test_blank_board(all=False, show=False):
     dataset = ImageFileDataset(1.0)
     for asset in dataset:
-        main(asset, show=False)
+        main(asset, show)
         if not all:
             break
+
+def test_all_piece_col(col, all=True, show=False):
+    assets = get_all_of_piece_colour(col)
+    for asset in assets:
+        main(asset, show)
+        if not all:
+            break
+
+def test_all_tile_col(col, all=True, show=False):
+    assets = get_all_of_tile_colour(col)
+    for asset in assets:
+        main(asset, show)
+        if not all:
+            break
+
 
 if __name__ == "__main__":
 
     # run_all("run31.03.csv")
 
     # test_blank_board(all=True)
+    # test_blank_board(show=True)
+    
+    test_all_piece_col("green", all=False, show=True)
 
-    asset = index_to_dir(4,1,6)
+    blank = index_to_dir(1,0,1)
+    # main(blank)
+    # test_connection
+    
+    print("\n")
+
+    asset = index_to_dir(4,1,1)
     
     
     # main(asset)
-    test_connection(asset, 33)
+    # test_connection(asset, 68)
