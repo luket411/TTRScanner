@@ -45,8 +45,8 @@ class BoardSegment(Quadrilateral):
         self.width_int = self.max_x_int - self.min_x_int
 
     # Return num between 0 and 1 that the carriage has changed
-    def containsCarriage(self, board):
-        pixels_in_carriage = self.getPixels(board)#[1540:1580]
+    def containsCarriage(self, board, show_breakdown=False):
+        pixels_in_carriage = self.getPixels(board)
         pixels_in_carriage = np.array([pixels_in_carriage], dtype=np.uint8)
         hsv_pixels_in_carriage = cv2.cvtColor(pixels_in_carriage, cv2.COLOR_RGB2HSV).squeeze(0)
         
@@ -104,11 +104,12 @@ class BoardSegment(Quadrilateral):
         # counter.printBreakdown(len(hsv_pixels_in_carriage))
         
         
-        # pixel_display_tall = np.full((200, *hsv_pixels_in_carriage.shape), pixel_display)
-        # pixel_value_tall = np.full((200, *hsv_pixels_in_carriage.shape), pixels_in_carriage)
-        # display = np.vstack((pixel_display_tall, pixel_value_tall))
-        # plt.imshow(display)
-        # plt.show()
+        if show_breakdown:        
+            pixel_display_tall = np.full((200, *hsv_pixels_in_carriage.shape), pixel_display)
+            pixel_value_tall = np.full((200, *hsv_pixels_in_carriage.shape), pixels_in_carriage)
+            display = np.vstack((pixel_display_tall, pixel_value_tall))
+            plt.imshow(display)
+            plt.show()
         
         return counter
 

@@ -70,12 +70,12 @@ class Connection():
             pixels.append(segment.getPixels(board))
         return pixels
 
-    def hasTrainResults(self, board):
+    def hasTrainResults(self, board, show_breakdown=False):
         segment: BoardSegment
         
         connection_counter = Counter()
         for segment in self.segments:
-            segment_counter: Counter = segment.containsCarriage(board)
+            segment_counter: Counter = segment.containsCarriage(board, show_breakdown)
             connection_counter = connection_counter + segment_counter
             
             # segment_counter.printBreakdown()
@@ -89,7 +89,7 @@ class Connection():
         return [self.id, connection_counter]
     
     def hasTrainDebug(self, board):
-        result_counter: Counter = self.hasTrainResults(board)[1]
+        result_counter: Counter = self.hasTrainResults(board, show_breakdown=True)[1]
         result_counter.printBreakdown()
         predicted_colour = result_counter.getWinner()
         hasChanged = predicted_colour != COLOURS[self.base_colour]

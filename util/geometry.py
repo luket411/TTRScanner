@@ -21,7 +21,8 @@ class Quadrilateral():
         self.min_y = self._ys.min(0)
 
     def plot(self, image=None, show=False, colour=None, fill=False):
-        colour = np.array(colour/255, np.float32)
+        if colour is not None:
+            colour = np.array(colour/255, np.float32)
         if image is not None:
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         if fill:
