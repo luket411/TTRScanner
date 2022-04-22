@@ -70,12 +70,19 @@ class Map():
     
 if __name__ == "__main__":
     
-    base_img = "assets/0.0 Cropped/11.png"
-    empty_image = np.full((2000,3000, 3), [209, 247, 255])
+    # base_img = "assets/0.0 Cropped/11.png"
+    # empty_image = np.full((2000,3000, 3), [209, 247, 255])
 
-    from board_handling.feature_detection import find_board
-    train_layout = find_board(base_img, "assets/2.2 Red-Blue,Black,Orange/PXL_20220209_151954858.jpg")
+    # from board_handling.feature_detection import find_board
+    # train_layout = find_board(base_img, "assets/2.2 Red-Blue,Black,Orange/PXL_20220209_151954858.jpg")
 
 
     map = Map()
-    map.plot(train_layout, True)
+    from util.constants import COLOURS
+    string = "["
+    for connection in map.connections:
+        connection: Connection
+        string += f"\"{connection.base_colour}\","
+    string += "]"
+    print(string)
+    # map.plot(train_layout, True)

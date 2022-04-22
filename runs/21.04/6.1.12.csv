@@ -1,0 +1,10 @@
+"assets/6.1 Black-Yellow,Green,Gray/12.jpg",correctly_labelled,correctly_missed,labelled_wrong,shouldnt_be_labelled,missed
+Red,0,8,0,0,0
+Green,1,6,0,0,1
+Pink,0,8,0,0,0
+Orange,0,8,0,0,0
+Black,0,2,0,6,0
+Gray,0,32,0,0,5
+Blue,0,8,0,0,0
+Yellow,4,0,4,0,0
+White,0,8,0,0,0

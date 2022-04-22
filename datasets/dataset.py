@@ -3,7 +3,10 @@ from os import path as ospath, listdir
 path.append(ospath.join(ospath.dirname(__file__), ".."))
 import numpy as np
 import cv2
+from random import randint
+
 from util.get_asset_dirs import dirs, subdirs
+
 convertor = {
     1.0:"assets/1.0 Blank",
     1.1:"assets/1.1 Full Examples",
@@ -91,7 +94,6 @@ class ImageFileDataset():
         return self.images[index]
 
 def index_to_dir(num, subnum, image_index):
-    
     if num == 1:
         return f'assets/1.0 Blank/{image_index}.jpg'
     else:
@@ -105,6 +107,13 @@ def index_to_dir(num, subnum, image_index):
             subdir = dir_colour
         return f'assets/{num}.{subnum} {dir_colour}-{subdir}/{image_index}.jpg'
 
+def random_dataset():
+    num = randint(1,6)
+    subnum = randint(0,3)
+    image_index = randint(1,2)
+    return index_to_dir(num, subnum, image_index)
+
+
 def get_all_of_tile_colour(col: str):
     retVals = []
     col = col.lower()
@@ -115,6 +124,7 @@ def get_all_of_tile_colour(col: str):
                 retVals.append(asset)
     return retVals
 
+# Accepts string colour
 def get_all_of_piece_colour(col: str):
     col = col.capitalize()
     col_idx = inv_cols[col]
@@ -125,5 +135,12 @@ def get_all_of_piece_colour(col: str):
                 retVals.append(asset)
     return retVals
 
+def get_file_code(file):
+    seperated = file.split("/")
+    first_chunk = seperated[1].split(" ")[0]
+    second_chunk = seperated[2].split(".")[0]
+    return f"{first_chunk}.{second_chunk}"
+
 if __name__ == "__main__":
-    print(get_all_of_piece_colour("Black"))
+    # print(get_all_of_piece_colour("Black"))
+    print(get_file_code("assets/4.12 Green-Yellow,Gray/42.jpg"))

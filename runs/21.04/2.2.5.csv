@@ -1,0 +1,10 @@
+"assets/2.2 Red-Blue,Black,Orange/5.jpg",correctly_labelled,correctly_missed,labelled_wrong,shouldnt_be_labelled,missed
+Red,0,8,0,0,0
+Green,0,8,0,0,0
+Pink,0,8,0,0,0
+Orange,5,3,0,0,0
+Black,3,3,0,2,0
+Gray,0,37,0,0,0
+Blue,0,8,0,0,0
+Yellow,0,8,0,0,0
+White,0,8,0,0,0
