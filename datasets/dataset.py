@@ -95,7 +95,10 @@ class ImageFileDataset():
 
 def index_to_dir(num, subnum, image_index):
     if num == 1:
-        return f'assets/1.0 Blank/{image_index}.jpg'
+        if subnum == 0:
+            return f'assets/1.0 Blank/{image_index}.jpg'
+        elif subnum == 1:
+            return f'assets/1.1 Full Examples/{image_index}.jpg'
     else:
         dir_colour = dirs[num-2]
         if subnum != 0:

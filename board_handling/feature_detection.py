@@ -1,9 +1,13 @@
 from sys import path
 from os import listdir, path as ospath
+
 path.append(ospath.join(ospath.dirname(__file__), ".."))
+
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
+
+from datasets.dataset import index_to_dir
 from board_handling.warp_board import annotate_fixed_city_points
 from scripts.get_and_save_corners import getImagesInDir
 
@@ -100,14 +104,19 @@ def find_board(target_file, source_file):
     return warped, target_img
 
 if __name__ == "__main__":
-    target_file="assets/0.0 Cropped/11.png"
-    source_file="assets/2.0 Red-Red/PXL_20220209_150018426.jpg"
-    # for source_file in getImagesInDir("assets/2.0 Red-Red"):
-        
-    board = find_board(target_file, source_file)
+    target_file = "assets/0.0 Cropped/3.png"
+    source_file = index_to_dir(2,0,1)
     
-    # annotated = annotate_fixed_city_points(np.copy(board), "assets/0.0 Cropped/cities11.csv")
-    # plt.imshow(annotated)
-    plt.imshow(board)
+    source_board = cv2.cvtColor((cv2.imread(source_file, 1)), cv2.COLOR_BGR2RGB)
+    board, target_board = find_board(target_file, source_file)
+    
+    source_board_reshape = cv2.resize(source_board, (3000,2000))
+    print(source_board_reshape.shape)
+    print(target_board.shape)
+    print(board.shape)
+
+
+
+    plt.imshow(np.hstack((source_board_reshape, board)))
     plt.show()
     

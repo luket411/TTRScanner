@@ -140,7 +140,11 @@ def asses_board(map: Map, board, answers, show=True):
     return retVal
 
 # Displays a map with the current boards estimate for each connection.
-def guess_colours(map: Map, board):
+def guess_colours(board_file):
+    
+    board, _ = find_board("assets/0.0 Cropped/3.png", board_file)
+    map = Map()
+    
     plt.imshow(board)
     results = map.process_multicore_results(board)
     correct = Counter()
@@ -155,7 +159,7 @@ def guess_colours(map: Map, board):
         connection.plot(use_colour=col)
             
     correct.printBreakdown()
-    
+    print("\n")
     incorrect.printBreakdown()
     plt.show()
 
@@ -279,19 +283,14 @@ def print_train_col_breakdown(resultd):
 
 if __name__ == "__main__":
 
-    run_all("run31.03.csv", "runs/21.04")
+    # run_all("run31.03.csv", "runs/21.04")
 
     # test_blank_board(all=True)
     # test_blank_board(show=True)
     
     # test_all_piece_col("green", all=True, show=False)
 
-    # blank = index_to_dir(1,0,1)
-    # print(main(blank))
-    
-    # print("\n")
-
-    # asset = index_to_dir(4,1,4)
-    # print(results := main(asset))
-    # results = ['assets/4.1 Green-Yellow,Gray/4.jpg', [[7, 8, 13, 14, 43, 50, 51, 61, 66, 69, 77, 78, 83, 87], [0, 1, 2, 3, 6, 9, 10, 11, 12, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 28, 29, 31, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 44, 45, 46, 47, 48, 49, 52, 53, 54, 55, 56, 57, 58, 59, 60, 62, 63, 64, 65, 67, 70, 71, 72, 73, 74, 75, 76, 79, 80, 81, 82, 84, 85, 86, 88, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100], [], [4, 5, 25, 30, 33, 68], [89]]]
-    # print_connection_col_breakdown(results)
+    asset = index_to_dir(4,0,1)
+    # guess_colours(asset)
+    print(res := main(asset))
+    print_connection_col_breakdown(res)

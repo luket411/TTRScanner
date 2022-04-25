@@ -1,5 +1,6 @@
 from sys import path
 from os import path as ospath
+
 path.append(ospath.join(ospath.dirname(__file__), ".."))
 
 import numpy as np
@@ -9,6 +10,9 @@ from concurrent import futures
 from train_detection.Connection import Connection
 from train_detection.BoardSegment import BoardSegment
 from train_detection.data_readers import read_base_colours_file, read_layout_csv, read_segment_file
+from datasets.dataset import index_to_dir
+from board_handling.feature_detection import find_board
+from util.constants import BASE_BACKGROUND_COLOUR
 from util.timer import timer
 
 class Map():
@@ -69,20 +73,8 @@ class Map():
         return results
     
 if __name__ == "__main__":
-    
-    # base_img = "assets/0.0 Cropped/11.png"
-    # empty_image = np.full((2000,3000, 3), [209, 247, 255])
-
-    # from board_handling.feature_detection import find_board
-    # train_layout = find_board(base_img, "assets/2.2 Red-Blue,Black,Orange/PXL_20220209_151954858.jpg")
-
-
+    sample_image, _ = find_board("assets/0.0 Cropped/3.png", index_to_dir(1,0,1))
+    empty_image = np.full((2000,3000, 3), BASE_BACKGROUND_COLOUR)
     map = Map()
-    from util.constants import COLOURS
-    string = "["
-    for connection in map.connections:
-        connection: Connection
-        string += f"\"{connection.base_colour}\","
-    string += "]"
-    print(string)
-    # map.plot(train_layout, True)
+    
+    map.plot(show=True, image=sample_image)

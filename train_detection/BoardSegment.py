@@ -10,7 +10,7 @@ import cv2
 
 from util.timer import timer
 from util.geometry import Quadrilateral, Point, isBetween
-from util.constants import BASE_BACKGROUND_COLOUR, COLOURS
+from util.constants import BASE_BACKGROUND_COLOUR, COLOURS, INVERSE_COLOURS
 from util.Counter import Counter
 
 colour_ranges = {
@@ -174,7 +174,7 @@ class BoardSegment(Quadrilateral):
     
     def plot(self, image=None, show=False, label=False, fill=False, colour=None, label_connection=None):
 
-        colour_val = self.base_colour
+        colour_val = np.array(INVERSE_COLOURS[self.base_colour])
         if colour is not None:
             colour_val = colour
         
