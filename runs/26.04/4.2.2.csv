@@ -1,0 +1,10 @@
+"Green:assets/4.2 Green-Blue,Black,Orange/2.jpg",correctly_labelled,correctly_missed,labelled_wrong,shouldnt_be_labelled,missed
+Red,0,0,0,0,0
+Green,0,0,0,0,0
+Pink,0,0,0,0,0
+Orange,4,0,0,0,0
+Black,6,0,0,0,0
+Gray,0,0,0,0,0
+Blue,6,0,0,0,0
+Yellow,0,0,0,0,0
+White,0,0,0,0,0

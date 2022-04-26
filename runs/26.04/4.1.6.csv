@@ -1,0 +1,10 @@
+"Green:assets/4.1 Green-Yellow,Gray/6.jpg",correctly_labelled,correctly_missed,labelled_wrong,shouldnt_be_labelled,missed
+Red,0,0,0,0,0
+Green,0,0,0,0,0
+Pink,0,0,0,0,0
+Orange,0,0,0,0,0
+Black,0,0,0,0,0
+Gray,6,0,0,0,2
+Blue,0,0,0,0,0
+Yellow,8,0,0,0,0
+White,0,0,0,0,0

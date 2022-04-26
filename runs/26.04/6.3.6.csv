@@ -1,0 +1,10 @@
+"Black:assets/6.3 Black-White,Red,Pink/6.jpg",correctly_labelled,correctly_missed,labelled_wrong,shouldnt_be_labelled,missed
+Red,5,0,2,0,0
+Green,0,0,0,0,0
+Pink,2,0,1,0,0
+Orange,0,0,0,0,0
+Black,0,0,0,0,0
+Gray,0,0,0,0,1
+Blue,0,0,0,0,0
+Yellow,0,0,0,0,0
+White,0,0,0,0,2
