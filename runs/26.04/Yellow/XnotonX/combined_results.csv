@@ -1,0 +1,10 @@
+,correctly_labelled,correctly_missed,labelled_wrong,shouldnt_be_labelled,missed
+Red,39.0,0.0,0.0,0.0,0.0
+Green,24.0,0.0,0.0,0.0,0.0
+Pink,27.0,0.0,0.0,0.0,0.0
+Orange,23.0,0.0,0.0,0.0,1.0
+Black,30.0,0.0,0.0,0.0,0.0
+Gray,106.0,0.0,0.0,0.0,0.0
+Blue,42.0,0.0,0.0,0.0,0.0
+Yellow,0.0,0.0,0.0,0.0,0.0
+White,33.0,0.0,0.0,0.0,0.0

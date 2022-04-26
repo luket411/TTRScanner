@@ -55,8 +55,10 @@ def results_to_fp_fn_percentage(results):
         res_row /= total
     return fp_fn_res
 
-results_folders = ["runs/21.04/Train Colour X on tiles that arent also colour X", "runs/21.04/Train Colours X on tiles that are also colour X", "runs/21.04/Black Train Colour"]
-results_path = "runs/21.04/Train Colours X on tiles that are also colour X/Yellow"
+# results_folders = ["runs/21.04/Train Colour X on tiles that arent also colour X", "runs/21.04/Train Colours X on tiles that are also colour X", "runs/21.04/Black Train Colour"]
+# results_path = "runs/21.04/Train Colours X on tiles that are also colour X/Yellow"
+
+results_path = "runs/26.04/Red/XonX"
 
 def write_results(res_path, combined_results, header):
     report = header

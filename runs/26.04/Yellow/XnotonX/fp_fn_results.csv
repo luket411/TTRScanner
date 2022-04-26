@@ -1,0 +1,10 @@
+,positive,negative,false_positive,false_negative
+Red,1.0,0.0,0.0,0.0
+Green,1.0,0.0,0.0,0.0
+Pink,1.0,0.0,0.0,0.0
+Orange,0.9583333333333334,0.0,0.0,0.041666666666666664
+Black,1.0,0.0,0.0,0.0
+Gray,1.0,0.0,0.0,0.0
+Blue,1.0,0.0,0.0,0.0
+Yellow,nan,nan,nan,nan
+White,1.0,0.0,0.0,0.0
