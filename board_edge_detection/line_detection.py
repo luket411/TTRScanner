@@ -62,7 +62,7 @@ def find_corners(img_file, show_output=False, debug_print=False):
                 except ValueError:
                     print(f"Missing Line {i}")
 
-        show(output)
+        # show(output)
 
     return corners
 
@@ -77,7 +77,7 @@ def blur_and_colour_shift(img_file):
 
     # Get the middle 15-85% of a selected white region and remove it
     img = get_image_board_outline(img, 15)
-    show(img)
+    # show(img)
 
     # Convert the image to grey
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

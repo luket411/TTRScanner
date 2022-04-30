@@ -34,16 +34,16 @@ def main(img = None, lower_percentile=10):
 
 
     boundary_boxes = []
-    plt.imshow(cv2.cvtColor(img, 4))
+    # plt.imshow(cv2.cvtColor(img, 4))
     for [[a,b], [c,d]] in selections:
         p1 = Point(a,b)
         p2 = Point(c,b)
         p3 = Point(c,d)
         p4 = Point(a,d)
         quad = Quadrilateral(p1, p2, p3, p4)
-        quad.plot()
+        # quad.plot()
         boundary_boxes.append(quad)
-    plt.show()
+    # plt.show()
 
     browns = np.empty((0,3), dtype=np.uint8)
 

@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from board_handling.feature_detection import find_board
+from board_edge_detection.full_board_pipeline import edge_detection
 from train_detection.BoardSegment import BoardSegment
 
 from train_detection.Connection import Connection
@@ -353,11 +354,14 @@ if __name__ == "__main__":
     
     # test_all_piece_col("green", all=True, show=False)
 
-    # asset = index_to_dir(4,0,1)
+    asset = index_to_dir(1,0,4)
+    # board, _ = find_board("assets/0.0 Cropped/3.png", asset)
+    # map = Map()
+    # map.connections[75].hasTrainDebug(board)
     # guess_colours(asset)
-    # print(res := ttr_scanner(asset))
-    # print_connection_col_breakdown(res)
+    print(res := ttr_scanner(asset))
+    print_connection_col_breakdown(res)
     
-    dir = "runs/26.04"
-    for col in ["Red","Blue","Green","Yellow","Black"]:
-        test_all_piece_col(col, dir)
+    # dir = "runs/26.04"
+    # for col in ["Red","Blue","Green","Yellow","Black"]:
+        # test_all_piece_col(col, dir)
