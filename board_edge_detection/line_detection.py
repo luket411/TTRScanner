@@ -17,7 +17,7 @@ def show(img):
 
 # img_file = "assets/IMG_4281.jpg"
 # img_file = "assets\PXL_20220121_220215270.jpg"
-img_file = "assets/clean_board.jpg"
+img_file = "assets/1.0 Blank/5.jpg"
 # img_file = "assets/clean_board_2.jpg"
 
 
@@ -42,7 +42,7 @@ img_file = "assets/clean_board.jpg"
         # print( f"lines.shape:{lines.shape}" if lines is not None else "lines.shape:None")
 
 def find_corners(img_file, show_output=False, debug_print=False):
-    img = blur_and_colour_shift(img_file)
+    img, img2 = blur_and_colour_shift(img_file)
     canny_edges = run_canny(img)
     line_points = run_hough(canny_edges, debug_print=debug_print)
     line_details = gather_line_details(line_points)
@@ -54,15 +54,20 @@ def find_corners(img_file, show_output=False, debug_print=False):
 
     if show_output:
         colours = [[0,200,0],[200,0,0],[0,0,200],[3, 252, 244]]
-        output = cv2.cvtColor(canny_edges, cv2.COLOR_GRAY2RGB)
+        # output = cv2.cvtColor(canny_edges, cv2.COLOR_GRAY2RGB)
+        output = cv2.imread(img_file, 1)
+
         if show_output:
             for i, edge in enumerate(edges):
                 try:
-                    output = edge.plot(output, colours[i])
+                    output2 = edge.plot(output, colours[i])
                 except ValueError:
                     print(f"Missing Line {i}")
 
-        # show(output)
+        output = cv2.imread(img_file, 1)
+        print(output.shape)
+        print(output2.shape)
+        show(np.hstack((output, img2, output2)))
 
     return corners
 
@@ -73,17 +78,17 @@ def blur_and_colour_shift(img_file):
 
     # Heavily blur the image, this reduces the amount of edges detected on the board and background
     img = cv2.GaussianBlur(img, (15,15),45)
-    # show(img)
+    show(img)
 
     # Get the middle 15-85% of a selected white region and remove it
     img = get_image_board_outline(img, 15)
-    # show(img)
+    show(img)
 
     # Convert the image to grey
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # img = 
     # plt.imshow(img, cmap='gray')
     # plt.show()
-    return img
+    return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), img
 
 def run_canny(img, threshold1=210, threshold2=255, edges=1, apertureSize=3, L2gradient=None):
     canny_edges = cv2.Canny(
