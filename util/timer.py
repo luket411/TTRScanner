@@ -10,10 +10,11 @@ from util.constants import ENABLE_TIMER
 def timer(func):
     def wrapper(*args, **kwargs):
         if ENABLE_TIMER:
-            t = time()
+            t_start = time()
             val = func(*args, **kwargs)
-            t = time() - t
-            print(f"Time Taken for function {ospath.basename(func.__code__.co_filename)}@{func.__code__.co_firstlineno}:{func.__name__}: {t}:s")
+            t_end = time()
+            t = t_end - t_start
+            print(f"Time Taken for function {ospath.basename(func.__code__.co_filename)}@{func.__code__.co_firstlineno}:{func.__name__}: {t}:s (Start time: {t_start}, End time: {t_end})")
         else:
             val = func(*args, **kwargs)
         return val

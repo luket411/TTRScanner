@@ -35,7 +35,37 @@ def assess(function, dataset = ImageFileDataset(1.0)):
     return results
 
 if __name__ == "__main__":
-    assess(edge_detection)
+    # assess(edge_detection)
+    
+    # f = feature_detection
+    
+    # dirs = [1.0, 2.0, 2.1, 2.2, 2.3, 3.0, 3.1]
+    
+    # feature_results = ""
+    # edge_results = ""
+    
+    # for dir in dirs:
+    #     for asset in ImageFileDataset(dir):
+    #         plt.imshow(feature_detection(asset))
+    #         plt.show()
+    #         i = bool(input())
+    #         print(f"{asset},{i}\n")
+    #         feature_results += f"{asset},{i}\n"
+            
+    #         plt.imshow(edge_detection(asset))
+    #         plt.show()
+    #         i = bool(input())
+    #         edge_results += f"{asset},{i}\n"
+    #         print(f"{asset},{i}\n")
+    
+    
+    # print(feature_results)
+    
+    # print("\n\n\n")
+    
+    # print(edge_results)
+            
+                
     
     
     

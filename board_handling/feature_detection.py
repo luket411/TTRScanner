@@ -1,6 +1,8 @@
 from sys import path
 from os import listdir, path as ospath
 
+from util.timer import timer
+
 path.append(ospath.join(ospath.dirname(__file__), ".."))
 
 import numpy as np
@@ -85,7 +87,8 @@ def find_homography_between_images(source_img, target_img):
     #     y = xy[1]/xy[2]
     
     return H
-    
+
+@timer
 def find_board(target_file, source_file):
     source_img = cv2.imread(source_file, 1)
     if source_img is None:

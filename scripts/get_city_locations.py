@@ -23,7 +23,6 @@ def onclick(event):
     
 
 def show_city_clickable(avg_img):
-    # avg_img = cv2.cvtColor(avg_img, 4)
     fig = plt.figure(1)
     ax = fig.add_subplot(111)
     ax.imshow(avg_img)
@@ -34,6 +33,7 @@ def show_city_clickable(avg_img):
     return out_string
 
 if __name__ == "__main__":
-    avg_img_file = "assets/0.0 Cropped/11.png"
+    avg_img_file = "assets/0.0 Cropped/3.png"
     avg_img = cv2.imread(avg_img_file, 1)
+    avg_img = cv2.cvtColor(avg_img, 4)
     show_city_clickable(avg_img)

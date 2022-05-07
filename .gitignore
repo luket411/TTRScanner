@@ -8,3 +8,4 @@ board_edge_detection/Used
 *.pdn
 assets/pickled
 plots
+runs/*

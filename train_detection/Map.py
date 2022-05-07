@@ -57,6 +57,7 @@ class Map():
                 results.append(process.result())
         return results
 
+    @timer
     def process_multicore(self, board):
         results = []
         with futures.ProcessPoolExecutor() as executor:

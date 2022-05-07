@@ -21,7 +21,8 @@ np.set_printoptions(suppress=True)
 
 # Used to assess full boards.
 # Displays a board with each connection highlighted by the colour it thinks is there
-def run_no_answers(target_file):
+@timer
+def run_no_answers(target_file, show=False):
     v = 3
     base_file = f"assets/0.0 Cropped/{v}.png"
     train_location_data = f"assets/0.0 Cropped/trains{v}.csv"
@@ -32,13 +33,15 @@ def run_no_answers(target_file):
 
     results = map.process_multicore(board)
 
-    plt.imshow(board)
-    for [idx, hasTrain, col] in results:
-        connection = map.connections[idx]
-        if hasTrain:
-            connection.plot(use_colour=np.array(INVERSE_COLOURS[col], dtype=np.float32))
-    plt.show()
+    if show:
+        plt.imshow(board)
+        for [idx, hasTrain, col] in results:
+            connection = map.connections[idx]
+            if hasTrain:
+                connection.plot(use_colour=np.array(INVERSE_COLOURS[col], dtype=np.float32))
+        plt.show()
 
+@timer
 def ttr_scanner(target_file, show=True):
     retVal = ttr_scanner_with_answers(target_file, show)
     return retVal[0:2]
@@ -58,7 +61,7 @@ def ttr_scanner_with_answers(target_file, show):
     answer_index = "/".join(target_file.split("/")[:-1])
     answers = read_connections(answer_index)[target]
 
-    results = asses_board(map, board, answers, show)
+    results = train_detection(map, board, answers, show)
     return [target_file, results, answers]
 
 def test_connection(target_file, connection_number):
@@ -74,7 +77,8 @@ def test_connection(target_file, connection_number):
     connection.plot(image=board, show=True, image_focus=True, use_avg_colour=True)
 
 # Uses the provided answers to mark into different categories of how the program performed
-def asses_board(map: Map, board, answers, show=True):
+@timer
+def train_detection(map: Map, board, answers, show=True):
     plt.imshow(board)
     
     # Big Step!
@@ -355,12 +359,13 @@ if __name__ == "__main__":
     # test_all_piece_col("green", all=True, show=False)
 
     asset = index_to_dir(1,0,4)
+    run_no_answers(asset)
     # board, _ = find_board("assets/0.0 Cropped/3.png", asset)
     # map = Map()
     # map.connections[75].hasTrainDebug(board)
     # guess_colours(asset)
-    print(res := ttr_scanner(asset))
-    print_connection_col_breakdown(res)
+    # print(res := ttr_scanner(asset, show=False))
+    # print_connection_col_breakdown(res)
     
     # dir = "runs/26.04"
     # for col in ["Red","Blue","Green","Yellow","Black"]:
