@@ -42,8 +42,10 @@ def sift_get_keypoints_descriptors(img, draw=False):
     return keypoints, descriptors
 
 def draw_matches(possiblyCorrectMatches, source_image, source_keypoints, target_image, target_keypoints):
-    img_matched = cv2.drawMatchesKnn(source_image, source_keypoints, target_image, target_keypoints, possiblyCorrectMatches, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-    fig=plt.figure(figsize=(24,24)) 
+    source_image = cv2.cvtColor(source_image, cv2.COLOR_RGB2GRAY)
+    target_image = cv2.cvtColor(target_image, cv2.COLOR_RGB2GRAY)
+    img_matched = cv2.drawMatchesKnn(source_image, source_keypoints, target_image, target_keypoints, possiblyCorrectMatches, None, [0,255,0])
+    # fig=plt.figure(figsize=(24,24)) 
     plt.imshow(img_matched)
     plt.show()
 
@@ -75,10 +77,10 @@ def find_homography_between_images(source_img, target_img):
     sourcepts = np.array(sourcepts, dtype=np.float32)
     
     
-    np.random.shuffle(possiblyCorrectMatches)
-    
+    # Takes two equal size arrays of points and uses RANSAC to create a homography mapping one to the other
     H = cv2.findHomography(sourcepts, targetpts, cv2.RANSAC, 20.0)[0]
     
+    np.random.shuffle(possiblyCorrectMatches)
     # draw_matches(possiblyCorrectMatches, source_img, source_keypoints, target_img, target_keypoints)
     # numMatches = len(possiblyCorrectMatches)
     # for i in range(numMatches):
@@ -114,12 +116,11 @@ if __name__ == "__main__":
     board, target_board = find_board(target_file, source_file)
     
     source_board_reshape = cv2.resize(source_board, (3000,2000))
-    print(source_board_reshape.shape)
-    print(target_board.shape)
-    print(board.shape)
+    # print(source_board_reshape.shape)
+    # print(target_board.shape)
+    # print(board.shape)
 
 
 
-    plt.imshow(np.hstack((source_board_reshape, board)))
-    plt.show()
+    # plt.imshow(np.hstack((source_board_reshape, board)))
     

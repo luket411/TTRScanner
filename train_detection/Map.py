@@ -52,6 +52,12 @@ class Map():
     def process_multicore_results(self, board):
         results = []
         with futures.ProcessPoolExecutor() as executor:
+            # 
+            # Runs connection.hasTrainResults(board) multi-threaded. 
+            # 
+            # Map.processes_singlecore(self, board)  function performs the same task but sequentially and is slightly easier
+            #   to understand 
+            # 
             processes = [executor.submit(connection.hasTrainResults, board) for connection in self.connections]
             for process in processes:
                 results.append(process.result())
