@@ -147,30 +147,6 @@ def train_detection(map: Map, board, answers, show=True):
         plt.show()
     return retVal
 
-# Displays a map with the current boards estimate for each connection.
-def guess_colours(board_file):
-    
-    board, _ = find_board("assets/0.0 Cropped/3.png", board_file)
-    map = Map()
-    
-    plt.imshow(board)
-    results = map.process_multicore_results(board)
-    correct = Counter()
-    incorrect = Counter()
-    for [idx, counter] in results:
-        connection = map.connections[idx]
-        if counter.getWinner() == COLOURS[connection.base_colour]:
-            correct.addVote(COLOURS[connection.base_colour])
-        else:
-            incorrect.addVote(COLOURS[connection.base_colour])
-        col = np.array(INVERSE_COLOURS[counter.getWinner()], dtype=np.float32)
-        connection.plot(use_colour=col)
-            
-    correct.printBreakdown()
-    print("\n")
-    incorrect.printBreakdown()
-    plt.show()
-
 # Runs main on all assets
 def run_all(csv_file, dir):
     if ospath.exists(csv_file) and ospath.getsize(csv_file) != 0:

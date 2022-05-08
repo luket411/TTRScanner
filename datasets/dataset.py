@@ -5,7 +5,7 @@ import numpy as np
 import cv2
 from random import randint
 
-from util.get_asset_dirs import dirs, subdirs
+from util.get_asset_dirs import dirs, subdirs, get_asset_dirs
 
 convertor = {
     1.0:"assets/1.0 Blank",
@@ -116,6 +116,17 @@ def random_dataset():
     image_index = randint(1,2)
     return index_to_dir(num, subnum, image_index)
 
+def get_all_images():
+    filenames = []
+    asset_dirs = get_asset_dirs()
+    for dir in asset_dirs:
+        for file in listdir(dir):
+            if file[-3:] == "jpg" or file[-3:] == "png":
+                filename = ospath.join(dir,file)
+                filename = filename.replace("\\","/")
+                filenames.append(filename)
+    return filenames
+    
 
 def get_all_of_tile_colour(col: str):
     retVals = []
@@ -145,5 +156,5 @@ def get_file_code(file):
     return f"{first_chunk}.{second_chunk}"
 
 if __name__ == "__main__":
-    # print(get_all_of_piece_colour("Black"))
-    print(get_file_code("assets/4.12 Green-Yellow,Gray/42.jpg"))
+    print(item := get_all_images()[0])
+    print(get_file_code(item))
