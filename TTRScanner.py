@@ -12,4 +12,4 @@ if __name__ == "__main__":
     
     # Will run TTRScanner on the asset specified. (Slightly Slow)
     # Shows a colour outline over a connection if it has identified a train is present
-    TTRScanner(asset)
+    TTRScanner(asset, show=True)

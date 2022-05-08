@@ -19,7 +19,7 @@ class Map():
     def __init__(self, segment_location='assets/0.0 Cropped/trains11.csv', connection_breakdown = 'assets/segment_info.csv', layout_colours='assets/0.0 Cropped/avg_colours11.csv'):
 
         self.connections: list(Connection) = []
-        location_id = int(segment_location.split("trains")[1][0:2])
+        location_id = int(segment_location.split("trains")[1].split(".")[0])
         self.mask_location = f"assets\coordinate_masks\image_{location_id}"
 
         train_layouts = read_layout_csv(segment_location)

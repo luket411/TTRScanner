@@ -29,9 +29,9 @@ def run_no_answers(target_file, show=False):
     layout_colours = f"assets/0.0 Cropped/avg_colours{v}.csv"
     
     board, _ = find_board(base_file, target_file)
-    map = Map(layout_colours=layout_colours, layout_info=train_location_data)
+    map = Map(layout_colours=layout_colours, segment_location=train_location_data)
 
-    results = map.process_multicore(board)
+    results = map.process_multicore(board, use_precompiled_masks=True)
 
     if show:
         plt.imshow(board)
@@ -82,7 +82,7 @@ def train_detection(map: Map, board, answers, show=True):
     plt.imshow(board)
     
     # Big Step!
-    results = map.process_multicore(board)
+    results = map.process_multicore(board, use_precompiled_masks=True)
     
     correct_hasTrain = []       # Green 0
     correct_noTrain = []        # No colour 1
