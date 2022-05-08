@@ -1,7 +1,6 @@
 from sys import path
 from os import listdir, path as ospath
 
-from util.timer import timer
 
 path.append(ospath.join(ospath.dirname(__file__), ".."))
 
@@ -9,6 +8,7 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
+from util.timer import timer
 from datasets.dataset import index_to_dir
 from board_handling.warp_board import annotate_fixed_city_points
 from scripts.get_and_save_corners import getImagesInDir
@@ -115,7 +115,8 @@ if __name__ == "__main__":
     source_board = cv2.cvtColor((cv2.imread(source_file, 1)), cv2.COLOR_BGR2RGB)
     board, target_board = find_board(target_file, source_file)
     
-    source_board_reshape = cv2.resize(source_board, (3000,2000))
+    plt.imshow(board)
+    plt.show()
     # print(source_board_reshape.shape)
     # print(target_board.shape)
     # print(board.shape)

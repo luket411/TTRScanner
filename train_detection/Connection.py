@@ -56,48 +56,40 @@ class Connection():
         if show:
             plt.show()
 
-    def getSegmentBaseAvg(self):
-        segment: BoardSegment
-        outsum = []
-        for segment in self.segments:
-            outsum.append(segment.base_colour)
-        return np.average(outsum, axis=0)
 
-    def getPixels(self, board):
-        pixels = []
+    def hasTrainResultsFull(self, board, show_breakdown=False):
         segment: BoardSegment
-        for segment in self.segments:
-            pixels.append(segment.getPixels(board))
-        return pixels
-
-    def hasTrainResults(self, board, show_breakdown=False):
-        segment: BoardSegment
-        
         connection_counter = Counter()
         for segment in self.segments:
-            segment_counter: Counter = segment.containsCarriage(board, show_breakdown)
+            segment_counter: Counter = segment.contains_carriage_full_calculations(board, show_breakdown)
             connection_counter = connection_counter + segment_counter
-            
-            # segment_counter.printBreakdown()
-            # print("\n")
-            # print(f"Carriage: {segment.id}, Colour: {self.base_colour}, Winner: {segment_counter.getWinner()}, ({round(segment_counter.getWinningPercentage()*100)}%)")
-        
-        # connection_counter.printBreakdown()
-        
-        # print(f"Connection: {str(self)}({self.id}), Base Colour: {self.base_colour}, Predicted Colour: {connection_counter.getWinner()}, Confidence: {round(connection_counter.getWinningPercentage(self.size)*100)}%")
-        # print(f"Connection {str(self)} Completed")
         return [self.id, connection_counter]
     
-    def hasTrainDebug(self, board):
-        result_counter: Counter = self.hasTrainResults(board, show_breakdown=True)[1]
+    def hasTrainResultsQuick(self, board, mask_location):
+        segment: BoardSegment
+        connection_counter = Counter()
+        for segment in self.segments:
+            segment_counter: Counter = segment.contains_carriage_quick(board, mask_location)
+            connection_counter = connection_counter + segment_counter
+        return [self.id, connection_counter]
+    
+    def hasTrainDebug(self, board, mask_location=None):
+        if mask_location:
+            result_counter: Counter = self.hasTrainResultsQuick(board, mask_location)[1]
+        else:
+            result_counter: Counter = self.hasTrainResultsFull(board, show_breakdown=True)[1]
         result_counter.printBreakdown()
         predicted_colour = result_counter.getWinner()
         hasChanged = predicted_colour != COLOURS[self.base_colour]
         isTrainColour = predicted_colour in valid_train_colours      
         return [self.id, hasChanged and isTrainColour, predicted_colour]
 
-    def hasTrain(self, board):
-        result_counter = self.hasTrainResults(board)[1]
+    def hasTrain(self, board, mask_location=None):
+        if mask_location:
+            result_counter: Counter = self.hasTrainResultsQuick(board, mask_location)[1]
+        else:
+            result_counter: Counter = self.hasTrainResultsFull(board)[1]
+
         predicted_colour = result_counter.getWinner()
         hasChanged = predicted_colour != COLOURS[self.base_colour]
         isTrainColour = predicted_colour in valid_train_colours      

@@ -9,21 +9,23 @@ from concurrent import futures
 
 from train_detection.Connection import Connection
 from train_detection.BoardSegment import BoardSegment
-from train_detection.data_readers import read_base_colours_file, read_layout_csv, read_segment_file
+from train_detection.data_readers import read_base_colours_file, read_layout_csv, read_connection_breakdown
 from datasets.dataset import index_to_dir
 from board_handling.feature_detection import find_board
 from util.constants import BASE_BACKGROUND_COLOUR
-from util.timer import timer
+from util.timer import timer, timer_context
 
 class Map():
-    def __init__(self, layout_info='assets/0.0 Cropped/trains11.csv', segment_info = 'assets/segment_info.csv', layout_colours='assets/0.0 Cropped/avg_colours11.csv'):
+    def __init__(self, segment_location='assets/0.0 Cropped/trains11.csv', connection_breakdown = 'assets/segment_info.csv', layout_colours='assets/0.0 Cropped/avg_colours11.csv'):
 
         self.connections: list(Connection) = []
+        location_id = int(segment_location.split("trains")[1][0:2])
+        self.mask_location = f"assets\coordinate_masks\image_{location_id}"
 
-        train_layouts = read_layout_csv(layout_info)
+        train_layouts = read_layout_csv(segment_location)
         base_colours = read_base_colours_file(layout_colours)
 
-        for i, connection_info in enumerate(read_segment_file(segment_info)):
+        for i, connection_info in enumerate(read_connection_breakdown(connection_breakdown)):
             city1 = connection_info[0][0]
             city2 = connection_info[0][1]
             connection_colour = train_layouts[connection_info[1][0]-1][0]
@@ -36,6 +38,24 @@ class Map():
             
             self.connections.append(Connection(city1, city2, segments, connection_colour, i))
 
+    def get_connection_by_id(self, id):
+        for connection in self.connections:
+            connection: Connection
+            if connection.id == id:
+                return connection
+            
+    def get_segments_made_from_connection(self, connection_id):
+        connection: Connection = self.get_connection_by_id(connection_id)
+        return [segment.id for segment in connection.segments]
+    
+    def get_segments(self):
+        return [segment for connection in self.connections for segment in connection.segments]
+    
+    def get_segment_by_id(self, id):
+        for segment in self.get_segments():
+            if segment.id == id:
+                return segment
+
     def plot(self, image=None, show=False, label=False):
         if image is not None:
             plt.imshow(image)
@@ -47,41 +67,62 @@ class Map():
 
         if show:
             plt.show()    
-    
-    @timer
-    def process_multicore_results(self, board):
+
+    def process_multicore(self, board, use_precompiled_masks=False):
         results = []
+        
+        mask_location = self.mask_location if use_precompiled_masks else None
+        
         with futures.ProcessPoolExecutor() as executor:
-            # 
-            # Runs connection.hasTrainResults(board) multi-threaded. 
-            # 
-            # Map.processes_singlecore(self, board)  function performs the same task but sequentially and is slightly easier
-            #   to understand 
-            # 
-            processes = [executor.submit(connection.hasTrainResults, board) for connection in self.connections]
+            processes = [executor.submit(connection.hasTrain, board, mask_location) for connection in self.connections]
             for process in processes:
                 results.append(process.result())
         return results
 
-    @timer
-    def process_multicore(self, board):
+    def process_singlecore(self, board, use_precompiled_masks=False):
         results = []
-        with futures.ProcessPoolExecutor() as executor:
-            processes = [executor.submit(connection.hasTrain, board) for connection in self.connections]
-            for process in processes:
-                results.append(process.result())
-        return results
-
-    @timer
-    def process_singlecore(self, board):
-        results = []
+        
+        mask_location = self.mask_location if use_precompiled_masks else None
+        
         for connection in self.connections:
-            results.append(connection.hasTrain(board))
+            connection: Connection
+            results.append(connection.hasTrain(board, mask_location=mask_location))
         return results
-    
+
+    def find_segments_in_image_full_calculations(self, board, debug_message=""):
+        images = []
+        with futures.ProcessPoolExecutor() as executor:
+            processes = [executor.submit(segment.find_in_image, board) for segment in self.get_segments()]
+            for process in processes:
+                images.append(process.result())
+
+        if debug_message:
+            print(debug_message)
+
+        return images
+
+    def find_segments_in_image_quick(self, board, debug=False):
+        segments = []
+        for connection in self.connections:
+            connection: Connection
+            for segment in connection.segments:
+                segment: BoardSegment
+                segments.append(segment.find_in_image(board, self.mask_location))
+                if debug:
+                    print(f"Segment completed ({segment.id})")
+
+        return segments
+
+
 if __name__ == "__main__":
-    sample_image, _ = find_board("assets/0.0 Cropped/3.png", index_to_dir(1,0,1))
+    board, _ = find_board("assets/0.0 Cropped/3.png", index_to_dir(1,0,1))
     empty_image = np.full((2000,3000, 3), BASE_BACKGROUND_COLOUR)
     map = Map()
-    
-    map.plot(show=True, image=sample_image)
+
+    # map.process_multicore(board, use_precompiled_masks=False)
+
+    map.process_multicore(board, use_precompiled_masks=True)
+
+    # map.process_singlecore(board, use_precompiled_masks=False)
+
+    # map.process_singlecore(board, use_precompiled_masks=True)

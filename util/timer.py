@@ -14,7 +14,7 @@ def timer(func):
             val = func(*args, **kwargs)
             t_end = time()
             t = t_end - t_start
-            print(f"Time Taken for function {ospath.basename(func.__code__.co_filename)}@{func.__code__.co_firstlineno}:{func.__name__}: {t}:s (Start time: {t_start}, End time: {t_end})")
+            print(f"Time Taken for function {ospath.basename(func.__code__.co_filename)}@{func.__code__.co_firstlineno}:{func.__name__}: {t}:s")
         else:
             val = func(*args, **kwargs)
         return val
@@ -23,8 +23,8 @@ def timer(func):
 
 
 @contextmanager
-def timer_context():
+def timer_context(label="code snippet"):
     start = time()
     yield
     end = time()
-    print(f"Time taken for code snippet: {end-start}s")
+    print(f"Time taken for {label}: {end-start}s")

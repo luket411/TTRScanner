@@ -25,8 +25,8 @@ COLOURS = [
 ]
 
 
-def read_segment_file(segment_file):
-    with open(segment_file) as open_file:
+def read_connection_breakdown(connection_breakdown):
+    with open(connection_breakdown) as open_file:
         file_reader = reader(open_file, quotechar='"')
         connections = []
         headers = file_reader.__next__()[1:]

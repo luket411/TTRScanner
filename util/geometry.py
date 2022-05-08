@@ -48,7 +48,7 @@ class Point():
         self.x = x
         self.y = y
 
-    def within(self, polygon):
+    def within(self, polygon: Quadrilateral):
         shapely_polygon = polygon.as_shapely_polygon()
         return self.as_shapely_point().within(shapely_polygon)
 
