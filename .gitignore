@@ -9,5 +9,5 @@ board_edge_detection/Used
 assets/pickled
 plots
 runs/*
-CNN_training
+CNN_training/*/
 CNN_train_detection/INT-3 Assessment Question code.py
