@@ -20,7 +20,7 @@ class Map():
 
         self.connections: list(Connection) = []
         location_id = int(segment_location.split("trains")[1].split(".")[0])
-        self.mask_location = f"assets\coordinate_masks\image_{location_id}"
+        self.mask_location = f"assets/coordinate_masks/image_{location_id}"
 
         train_layouts = read_layout_csv(segment_location)
         base_colours = read_base_colours_file(layout_colours)

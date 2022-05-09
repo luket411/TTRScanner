@@ -1,13 +1,13 @@
 from sys import path
 from os import path as ospath
 
-from datasets.masks import read_mask_from_location
 path.append(ospath.join(ospath.dirname(__file__), ".."))
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from concurrent import futures  
 
+from datasets.masks import read_mask_from_location
 from train_detection.Map import Map
 from train_detection.BoardSegment import BoardSegment
 
@@ -32,7 +32,7 @@ def generate_masks(v = 3):
     train_location_data = f"assets/0.0 Cropped/trains{v}.csv"
     layout_colours = f"assets/0.0 Cropped/avg_colours{v}.csv"
     
-    map = Map(layout_colours=layout_colours, layout_info=train_location_data)
+    map = Map(layout_colours=layout_colours, segment_location=train_location_data)
 
     with futures.ProcessPoolExecutor() as executor:
         processes = [executor.submit(create_and_write_mask, segment, v) for segment in map.get_segments()]
@@ -60,3 +60,6 @@ def test_system(v=3):
             break
         else:
             print(f"Masks equal for segment: {segment.id}")
+
+if __name__ == "__main__":
+    generate_masks()

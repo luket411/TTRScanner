@@ -27,13 +27,13 @@ def main():
         file_code = get_file_code(asset)
 
         dir = ospath.join("CNN_training", file_code)
+        if not ospath.exists(dir):
+            makedirs(dir)
 
         with timer_context(f"pixel finding for: {file_code}"):
-            for [segment_image, id] in map.find_segments_in_image(board):
+            for [segment_image, id] in map.find_segments_in_image_quick(board):
                 filename = ospath.join(dir, f"{id}.png")
                 cv2.imwrite(filename, cv2.cvtColor(segment_image, 4))
-    
-        break
     
         print(f"Finished: {dir}")
 
@@ -81,7 +81,7 @@ def assess_labels(csv_file):
     
 
 if __name__ == "__main__":
-    assess_labels("CNN_training\labels.csv")
+    main()
     
     # asset = index_to_dir(1,0,1)
     
